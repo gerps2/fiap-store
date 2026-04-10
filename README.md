@@ -1,8 +1,6 @@
 # fiap-store
 
-Projeto de referência da disciplina *Arquitetura Angular para Aplicações de Alta Escala* (FIAP PosTech) — Aula 1, Vídeo 3.
-
-Demonstra uma arquitetura de **Micro Frontends com Angular 21** usando `@angular-architects/native-federation`: um host que carrega dinamicamente três aplicações independentes (remotes).
+Exemplo de arquitetura de **Micro Frontends com Angular 21** usando `@angular-architects/native-federation`: um host que carrega dinamicamente três aplicações independentes (remotes).
 
 ---
 
@@ -13,10 +11,10 @@ Demonstra uma arquitetura de **Micro Frontends com Angular 21** usando `@angular
 │           host  :4200               │
 │  (shell: topbar + menu + roteamento)│
 │                                     │
-│  ┌──────────┐  ┌──────────┐  ┌────────────┐ │
-│  │mfe-produtos│  │mfe-carrinho│  │mfe-checkout│ │
-│  │  :4201   │  │   :4202  │  │   :4203  │ │
-│  └──────────┘  └──────────┘  └────────────┘ │
+│  ┌────────────┐ ┌────────────┐ ┌────────────┐ │
+│  │mfe-produtos│ │mfe-carrinho│ │mfe-checkout│ │
+│  │   :4201   │ │   :4202   │ │   :4203   │ │
+│  └────────────┘ └────────────┘ └────────────┘ │
 └─────────────────────────────────────┘
 ```
 
@@ -83,27 +81,29 @@ Em produção, basta trocar as URLs para apontar para os domínios reais de cada
 ## Estrutura dos arquivos
 
 ```
-fiap-mf-aula1/
-├── package.json                                   ← scripts npm run start:*
-├── projects/
-│   ├── host/
-│   │   ├── public/federation.manifest.json        ← URLs dos remotes em runtime
-│   │   └── src/app/
-│   │       ├── app.ts                             ← topbar + menu + router-outlet
-│   │       ├── app.routes.ts                      ← rotas com loadRemoteModule
-│   │       └── pages/home.ts                      ← composição dos 3 MFEs
-│   ├── mfe-produtos/
-│   │   ├── federation.config.js                   ← declara o que este remote expõe
-│   │   └── src/app/produtos.component.ts
-│   ├── mfe-carrinho/
-│   │   ├── federation.config.js
-│   │   └── src/app/carrinho.component.ts
-│   └── mfe-checkout/
-│       ├── federation.config.js
-│       └── src/app/checkout.component.ts
+fiap-store/
+├── README.md
+└── src/
+    ├── package.json                                   ← scripts npm run start:*
+    ├── angular.json
+    ├── tsconfig.json
+    └── projects/
+        ├── host/
+        │   ├── public/federation.manifest.json        ← URLs dos remotes em runtime
+        │   └── src/app/
+        │       ├── app.ts                             ← topbar + menu + router-outlet
+        │       ├── app.routes.ts                      ← rotas com loadRemoteModule
+        │       └── pages/home.ts                      ← composição dos 3 MFEs
+        ├── mfe-produtos/
+        │   ├── federation.config.js                   ← declara o que este remote expõe
+        │   └── src/app/produtos.component.ts
+        ├── mfe-carrinho/
+        │   ├── federation.config.js
+        │   └── src/app/carrinho.component.ts
+        └── mfe-checkout/
+            ├── federation.config.js
+            └── src/app/checkout.component.ts
 ```
-
-> Os demais arquivos (`angular.json`, `tsconfig*.json`, `src/main.ts`, `src/bootstrap.ts` etc.) são gerados pelos schematics do Angular CLI e do Native Federation — não estão versionados aqui porque variam conforme a versão exata do CLI.
 
 ---
 
@@ -118,6 +118,7 @@ fiap-mf-aula1/
 ## Como rodar
 
 ```bash
+cd src
 npm install
 
 # Abra 4 terminais e rode nesta ordem (remotes antes do host):
@@ -139,11 +140,11 @@ npm run start:host       # http://localhost:4200
 | `http://localhost:4202` | `mfe-carrinho` rodando standalone |
 | `http://localhost:4203` | `mfe-checkout` rodando standalone |
 
-> Os remotes rodam standalone porque são apps Angular completos — útil para desenvolvimento e debug isolado de cada equipe.
+> Os remotes rodam standalone porque são apps Angular completos — útil para desenvolvimento e debug isolado de cada time.
 
 ---
 
-## Conceitos aplicados nesta aula
+## Conceitos aplicados
 
 - **Workspace multi-app** — um único repositório com `host` e remotes independentes.
 - **Native Federation** — implementação de Module Federation nativa para Angular (sem Webpack), baseada em ES Modules e import maps.
@@ -151,11 +152,3 @@ npm run start:host       # http://localhost:4200
 - **`loadRemoteModule`** — função que baixa e instancia um componente de outro app em tempo de execução.
 - **Composição vs. roteamento** — dois padrões distintos de integração: múltiplos MFEs numa mesma página ou cada MFE isolado em sua rota.
 - **Signals e `computed`** — estado reativo no `mfe-carrinho` sem necessidade de bibliotecas externas.
-
----
-
-## Próxima aula
-
-**Aula 2 — Module Federation: Isolamento, Compartilhamento e Versionamento**
-
-Aprofunda os temas avançados: estratégias de `shared` deps, versionamento semântico entre remotes, isolamento em runtime, routing interno dos remotes e governança em produção.
