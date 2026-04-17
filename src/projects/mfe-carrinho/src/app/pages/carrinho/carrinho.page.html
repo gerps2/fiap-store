@@ -1,0 +1,138 @@
+
+    @if (!embedded) {
+      <button type="button" class="trigger" (click)="abrir()" aria-label="Abrir carrinho">
+        <svg class="trigger__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"></path>
+        </svg>
+        <span class="trigger__label">Carrinho ({{ quantidadeTotal() }})</span>
+        <span class="trigger__total">R$ {{ total() | number:'1.2-2' }}</span>
+      </button>
+    }
+
+    @if (aberto() && !embedded) {
+      <div class="backdrop" (click)="fechar()" aria-hidden="true"></div>
+    }
+
+    <aside
+      class="drawer"
+      [class.is-open]="aberto()"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Carrinho de compras"
+    >
+      <header class="drawer__header">
+        <div>
+          <p class="eyebrow fiap-eyebrow">Seu pedido</p>
+          <h2 class="drawer__title">Seu carrinho</h2>
+          <p class="drawer__subtitle">{{ itens().length }} {{ itens().length === 1 ? 'item' : 'itens' }}</p>
+        </div>
+        @if (!embedded) {
+          <button type="button" class="close" (click)="fechar()" aria-label="Fechar carrinho">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        }
+      </header>
+
+      <div class="drawer__body">
+        @if (itens().length === 0) {
+          <div class="empty">
+            <svg class="empty__art" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 28h14l10 50a6 6 0 0 0 6 5h38a6 6 0 0 0 6-5l6-30H38"></path>
+              <circle cx="50" cy="98" r="6"></circle>
+              <circle cx="86" cy="98" r="6"></circle>
+            </svg>
+            <h3 class="empty__title">Seu carrinho está vazio</h3>
+            <p class="empty__text">Comece a explorar o catálogo.</p>
+            <a class="fiap-btn-primary" routerLink="/produtos" (click)="fechar()">Explorar produtos</a>
+          </div>
+        } @else {
+          <ul class="lista">
+            @for (item of itens(); track item.id) {
+              <li class="item">
+                <div class="item__thumb" [attr.data-icon]="item.icon">
+                  @switch (item.icon) {
+                    @case ('shirt') {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 7l4-3 4 2 4-2 4 3-2 4h-2v9H8v-9H6l-2-4z"></path>
+                      </svg>
+                    }
+                    @case ('cup') {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 5h11v10a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5V5z"></path>
+                        <path d="M16 8h2a3 3 0 0 1 0 6h-2"></path>
+                      </svg>
+                    }
+                    @case ('book') {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"></path>
+                        <path d="M5 17a3 3 0 0 1 3-3h11"></path>
+                      </svg>
+                    }
+                    @case ('laptop') {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="4" y="5" width="16" height="11" rx="1.5"></rect>
+                        <path d="M2 19h20"></path>
+                      </svg>
+                    }
+                  }
+                </div>
+
+                <div class="item__info">
+                  <span class="item__nome">{{ item.nome }}</span>
+                  <span class="item__categoria">{{ item.categoria }}</span>
+
+                  <div class="stepper" role="group" aria-label="Quantidade">
+                    <button type="button" (click)="decrementar(item.id)" aria-label="Diminuir">−</button>
+                    <span class="stepper__qty">{{ item.quantidade }}</span>
+                    <button type="button" (click)="incrementar(item.id)" aria-label="Aumentar">+</button>
+                  </div>
+                </div>
+
+                <div class="item__side">
+                  <span class="item__preco">R$ {{ item.preco * item.quantidade | number:'1.2-2' }}</span>
+                  <button type="button" class="item__remove" (click)="remover(item.id)" aria-label="Remover item">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                    </svg>
+                  </button>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+
+      @if (itens().length > 0) {
+        <footer class="drawer__footer">
+          <div class="resumo">
+            <div class="resumo__linha">
+              <span>Subtotal</span>
+              <span class="tabular">R$ {{ subtotal() | number:'1.2-2' }}</span>
+            </div>
+            <div class="resumo__linha">
+              <span>Frete</span>
+              @if (frete() === 0) {
+                <span class="frete-gratis">Grátis</span>
+              } @else {
+                <span class="tabular">R$ {{ frete() | number:'1.2-2' }}</span>
+              }
+            </div>
+            <div class="resumo__divider"></div>
+            <div class="resumo__total">
+              <span class="resumo__total-label">Total</span>
+              <span class="resumo__total-valor tabular">R$ {{ total() | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <a class="fiap-btn-primary cta" routerLink="/checkout" (click)="fechar()">Finalizar pedido</a>
+          <p class="microcopy">Parcele em até 12x sem juros</p>
+        </footer>
+      }
+    </aside>

@@ -12,16 +12,10 @@ module.exports = withNativeFederation({
     'rxjs/fetch',
     'rxjs/testing',
     'rxjs/webSocket',
-    // Add further packages you don't need at runtime
+    '@fiap/shared-ui',
   ],
 
-  // Please read our FAQ about sharing libs:
-  // https://shorturl.at/jmzH0
-
   features: {
-    // New feature for more performance and avoiding
-    // issues with node libs. Comment this out to
-    // get the traditional behavior:
     ignoreUnusedDeps: true,
   },
 });

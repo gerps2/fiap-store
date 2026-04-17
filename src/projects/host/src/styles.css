@@ -1,1 +1,39 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globais do host — fonts, tokens, primitives. */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+@import '@fiap/shared-ui/styles/tokens.css';
+@import '@fiap/shared-ui/styles/primitives.css';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--fiap-color-text);
+  background: var(--fiap-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+* { box-sizing: border-box; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+::selection { background: var(--fiap-red); color: var(--fiap-white); }
+
+/* Scrollbar sutil */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--fiap-surface); }
+::-webkit-scrollbar-thumb {
+  background: var(--fiap-color-border-strong);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--fiap-surface);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--fiap-dark-3); }

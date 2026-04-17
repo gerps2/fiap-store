@@ -13,7 +13,12 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "baseUrl": "./",
+    "paths": {
+      "@fiap/shared-ui": ["./projects/shared-ui/src/public-api.ts"],
+      "@fiap/shared-ui/*": ["./projects/shared-ui/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -34,6 +39,9 @@
     },
     {
       "path": "./projects/mfe-checkout/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/mfe-notificacoes/tsconfig.app.json"
     }
   ]
 }

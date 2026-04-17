@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CheckoutComponent } from './checkout.component';
+import { CheckoutComponent } from './pages/checkout/checkout.page';
 
 @Component({
   selector: 'app-root',

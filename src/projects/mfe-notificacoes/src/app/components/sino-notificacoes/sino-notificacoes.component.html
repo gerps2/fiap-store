@@ -1,0 +1,104 @@
+
+    <button
+      class="sino"
+      type="button"
+      (click)="alternarPainel($event)"
+      [attr.aria-expanded]="aberto()"
+      aria-label="Abrir notificações"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#FFFFFF"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M6 8a6 6 0 1 1 12 0c0 4.5 1.5 6 2 7H4c.5-1 2-2.5 2-7Z" />
+        <path d="M10.3 19a1.94 1.94 0 0 0 3.4 0" />
+      </svg>
+      @if (servico.naoLidas() > 0) {
+        <span class="fiap-cart-badge">{{ servico.naoLidas() }}</span>
+      }
+    </button>
+
+    @if (aberto()) {
+      <div class="painel" role="dialog" aria-label="Notificações">
+        <header class="painel-header">
+          <h4>Notificações</h4>
+          <button type="button" class="link-acao" (click)="marcarTodas($event)">
+            Marcar todas como lidas
+          </button>
+        </header>
+
+        <ul class="lista">
+          @for (n of servico.itens(); track n.id) {
+            <li class="item" [class.item--lida]="n.lida" (click)="servico.marcarComoLida(n.id)">
+              <span class="dot" [class.dot--lida]="n.lida" aria-hidden="true"></span>
+              <div class="conteudo">
+                <p class="titulo">{{ n.titulo }}</p>
+                <span class="timestamp">{{ formatarTempo(n) }}</span>
+              </div>
+            </li>
+          } @empty {
+            <li class="vazio">Nenhuma notificação por aqui.</li>
+          }
+        </ul>
+
+        <footer class="painel-footer">
+          <a href="/notificacoes" class="link-ver-todas" (click)="fechar()">Ver todas</a>
+        </footer>
+      </div>
+    }
+
+    <div class="toast-stack" aria-live="polite" aria-atomic="false">
+      @for (t of toast.toasts(); track t.id) {
+        <div class="fiap-toast fiap-toast--{{ t.variante }}" [class.is-leaving]="t.leaving" role="status">
+          <span class="toast-icone" aria-hidden="true">
+            @switch (t.variante) {
+              @case ('success') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              }
+              @case ('error') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              }
+              @case ('warning') {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 9v4" />
+                  <path d="M12 17h.01" />
+                  <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+                </svg>
+              }
+              @default {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 16v-4" />
+                  <path d="M12 8h.01" />
+                </svg>
+              }
+            }
+          </span>
+          <div class="toast-body">
+            <strong class="toast-titulo">{{ t.titulo }}</strong>
+            @if (t.body) {
+              <p class="toast-texto">{{ t.body }}</p>
+            }
+          </div>
+          <button type="button" class="toast-fechar" (click)="toast.remover(t.id)" aria-label="Fechar">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </div>
+      }
+    </div>

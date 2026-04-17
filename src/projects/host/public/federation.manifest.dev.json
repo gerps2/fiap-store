@@ -1,0 +1,6 @@
+{
+  "mfe-produtos": "https://mfe-produtos.fiap-alta-escala.dev/remoteEntry.json",
+  "mfe-carrinho": "https://mfe-carrinho.fiap-alta-escala.dev/remoteEntry.json",
+  "mfe-checkout": "https://mfe-checkout.fiap-alta-escala.dev/remoteEntry.json",
+  "mfe-notificacoes": "https://mfe-notificacoes.fiap-alta-escala.dev/remoteEntry.json"
+}

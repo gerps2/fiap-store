@@ -1,154 +1,103 @@
-# fiap-store
+# fiap-mf-aula2
 
-Exemplo de arquitetura de **Micro Frontends com Angular 21** usando `@angular-architects/native-federation`: um host que carrega dinamicamente três aplicações independentes (remotes).
+Código de referência da **Aula 2** da disciplina *Arquitetura Angular para Aplicações de Alta Escala* (FIAP PosTech).
 
----
+Continuação direta do `fiap-mf-aula1`. A base é a mesma (1 host + 3 remotes em Angular 21 com `@angular-architects/native-federation`); a Aula 2 adiciona, em três passos hands-on:
 
-## Visão geral da arquitetura
+1. **Vídeo 2** — novo MFE `mfe-notificacoes` (4204), exposto em duas formas (`./Sino` componente único e `./Pagina` página inteira com sub-rotas).
+2. **Vídeo 3** — lib `shared-ui` (`UiButtonComponent` + tokens CSS) compartilhada via `share` em todos os MFEs.
+3. **Vídeo 4** — `singleton`/`strictVersion`/`requiredVersion`, simulação de quebra por upgrade isolado, e setup local **modo `solo`** (manifest por ambiente + scripts npm: aluno sobe só o remote dele).
 
-```
-┌─────────────────────────────────────┐
-│           host  :4200               │
-│  (shell: topbar + menu + roteamento)│
-│                                     │
-│  ┌────────────┐ ┌────────────┐ ┌────────────┐ │
-│  │mfe-produtos│ │mfe-carrinho│ │mfe-checkout│ │
-│  │   :4201   │ │   :4202   │ │   :4203   │ │
-│  └────────────┘ └────────────┘ └────────────┘ │
-└─────────────────────────────────────┘
-```
+## Apps após a Aula 2
 
-O **host** é o shell da aplicação. Ele não conhece os remotes em tempo de compilação — descobre onde eles estão em runtime lendo o `federation.manifest.json`. Cada **remote** é um app Angular autônomo que expõe um componente via Native Federation.
-
-### Aplicações
-
-| App | Porta | Tipo | O que faz |
+| App | Porta | Tipo | O que expõe |
 |---|---|---|---|
-| `host` | 4200 | `dynamic-host` | Shell com topbar, menu de navegação e `<router-outlet>`. Carrega os remotes dinamicamente. |
-| `mfe-produtos` | 4201 | `remote` | Catálogo de produtos. Expõe `ProdutosComponent`. |
-| `mfe-carrinho` | 4202 | `remote` | Carrinho com total reativo via `signal`/`computed`. Expõe `CarrinhoComponent`. |
-| `mfe-checkout` | 4203 | `remote` | Formulário de finalização de pedido. Expõe `CheckoutComponent`. |
-
----
-
-## Como os remotes são carregados
-
-### Na home — composição simultânea
-
-A página home exibe os três MFEs empilhados na mesma tela. O carregamento é feito com `Promise.all` + `loadRemoteModule` + `ViewContainerRef.createComponent`:
-
-```ts
-// host/src/app/pages/home.ts (simplificado)
-const [Produtos, Carrinho, Checkout] = await Promise.all([
-  loadRemoteModule('mfe-produtos', './Component'),
-  loadRemoteModule('mfe-carrinho', './Component'),
-  loadRemoteModule('mfe-checkout', './Component'),
-]);
-```
-
-Os três remotes são resolvidos em paralelo e instanciados como componentes independentes no DOM.
-
-### Nas rotas — carregamento isolado
-
-Cada rota carrega um único MFE sob demanda (lazy loading):
-
-```ts
-// host/src/app/app.routes.ts (simplificado)
-{
-  path: 'produtos',
-  loadComponent: () => loadRemoteModule('mfe-produtos', './Component')
-}
-```
-
-O remote só é baixado quando o usuário navega para aquela rota.
-
-### O manifesto de federação
-
-O host descobre os remotes através de `public/federation.manifest.json`:
-
-```json
-{
-  "mfe-produtos":  { "remoteEntry": "http://localhost:4201/remoteEntry.json" },
-  "mfe-carrinho":  { "remoteEntry": "http://localhost:4202/remoteEntry.json" },
-  "mfe-checkout":  { "remoteEntry": "http://localhost:4203/remoteEntry.json" }
-}
-```
-
-Em produção, basta trocar as URLs para apontar para os domínios reais de cada remote — sem recompilar o host.
-
----
-
-## Estrutura dos arquivos
-
-```
-fiap-store/
-├── README.md
-└── src/
-    ├── package.json                                   ← scripts npm run start:*
-    ├── angular.json
-    ├── tsconfig.json
-    └── projects/
-        ├── host/
-        │   ├── public/federation.manifest.json        ← URLs dos remotes em runtime
-        │   └── src/app/
-        │       ├── app.ts                             ← topbar + menu + router-outlet
-        │       ├── app.routes.ts                      ← rotas com loadRemoteModule
-        │       └── pages/home.ts                      ← composição dos 3 MFEs
-        ├── mfe-produtos/
-        │   ├── federation.config.js                   ← declara o que este remote expõe
-        │   └── src/app/produtos.component.ts
-        ├── mfe-carrinho/
-        │   ├── federation.config.js
-        │   └── src/app/carrinho.component.ts
-        └── mfe-checkout/
-            ├── federation.config.js
-            └── src/app/checkout.component.ts
-```
-
----
+| `host` | 4200 | `dynamic-host` | Topbar com sino do `mfe-notificacoes` + rotas + composição da home |
+| `mfe-produtos` | 4201 | `remote` | `./Component` → `ProdutosComponent` (consome `<ui-button>` e tokens) |
+| `mfe-carrinho` | 4202 | `remote` | `./Component` → `CarrinhoComponent` (alvo do cenário "upgrade quebra prod") |
+| `mfe-checkout` | 4203 | `remote` | `./Component` → `CheckoutComponent` (botão "Finalizar" usa `<ui-button>`) |
+| `mfe-notificacoes` | 4204 | `remote` | `./Sino` → `SinoNotificacoesComponent` · `./Pagina` → `NotificacoesPageComponent` (sub-rotas `lista`/`configuracoes`) |
+| `shared-ui` (lib) | — | library | `UiButtonComponent` + `tokens.css` (cores, tipografia, espaçamentos) |
 
 ## Pré-requisitos
 
-- Node.js 24 LTS — `node -v`
-- npm 10+ — `npm -v`
-- Angular CLI 21+ — `npm i -g @angular/cli@latest`
-
----
+- Node.js 24 LTS (`node -v`)
+- npm 10+ (`npm -v`)
+- Angular CLI 21+ (`npm i -g @angular/cli@latest`)
+- (Para o modo `solo`) URL pública dos remotes da Aula 1 — deploy preview com CORS liberado.
 
 ## Como rodar
 
-```bash
-cd src
-npm install
+Passo-a-passos detalhados de cada vídeo hands-on:
+- [`../passo-a-passo-video-2.md`](../passo-a-passo-video-2.md) — `mfe-notificacoes`
+- [`../passo-a-passo-video-3.md`](../passo-a-passo-video-3.md) — `shared-ui` + tema
+- [`../passo-a-passo-video-4.md`](../passo-a-passo-video-4.md) — versionamento + modo `solo`
 
-# Abra 4 terminais e rode nesta ordem (remotes antes do host):
-npm run start:produtos   # http://localhost:4201
-npm run start:carrinho   # http://localhost:4202
-npm run start:checkout   # http://localhost:4203
-npm run start:host       # http://localhost:4200
+### Modos de execução
+
+| Cenário | Comando | O que sobe localmente |
+|---------|---------|-----------------------|
+| Tudo local (debug profundo) | `npm run start:local` (precisa subir cada remote em 5 terminais) | host + 4 remotes em `localhost` |
+| Só edito o host | `npm start` | só o host; remotes vêm do deploy preview |
+| Edito **só** um remote (ex.: notificações) | Terminal A: `cd src/projects/mfe-notificacoes && npm start`<br>Terminal B (host): `npm run start:solo -- --mfe=mfe-notificacoes` | host + `mfe-notificacoes` local; demais remotes do preview |
+
+### Atalhos de scripts
+
+```bash
+# Dev "padrão" — host local, todos remotes em deploy preview
+npm start
+
+# Dev full-local — todos os MFEs locais
+npm run start:local
+
+# Dev modo solo — só edito o MFE que passei em --mfe=
+npm run start:solo -- --mfe=mfe-notificacoes
 ```
 
-### URLs disponíveis
+Os scripts internamente chamam `node scripts/use-manifest.mjs <modo>` antes do `ng serve host`. Esse script lê os manifests `federation.manifest.{local,dev,solo}.json` em `src/projects/host/public/` e gera o `federation.manifest.json` ativo.
 
-| URL | O que você verá |
-|---|---|
-| `http://localhost:4200/` | Home com os 3 MFEs compostos na mesma página |
-| `http://localhost:4200/produtos` | Apenas `mfe-produtos` carregado via rota |
-| `http://localhost:4200/carrinho` | Apenas `mfe-carrinho` carregado via rota |
-| `http://localhost:4200/checkout` | Apenas `mfe-checkout` carregado via rota |
-| `http://localhost:4201` | `mfe-produtos` rodando standalone |
-| `http://localhost:4202` | `mfe-carrinho` rodando standalone |
-| `http://localhost:4203` | `mfe-checkout` rodando standalone |
+## Estrutura dos arquivos novos / modificados nesta aula
 
-> Os remotes rodam standalone porque são apps Angular completos — útil para desenvolvimento e debug isolado de cada time.
+```
+fiap-mf-aula2/
+├── README.md                                                ← este arquivo
+├── package.json                                             ← novos scripts: start:local, start:solo, builds
+├── scripts/
+│   └── use-manifest.mjs                                     ← gera federation.manifest.json conforme o modo
+├── src/
+│   ├── projects/
+│   │   ├── host/
+│   │   │   ├── public/
+│   │   │   │   ├── federation.manifest.json                 ← gerado (git-ignored)
+│   │   │   │   ├── federation.manifest.local.json           ← todos em localhost
+│   │   │   │   ├── federation.manifest.dev.json             ← todos em deploy preview
+│   │   │   │   └── federation.manifest.solo.json            ← template do modo solo
+│   │   │   └── src/app/
+│   │   │       ├── app.ts                                   ← topbar agora carrega <Sino> remoto
+│   │   │       ├── app.routes.ts                            ← rota /notificacoes carrega Pagina
+│   │   │       └── pages/home.ts                            ← inalterado (continua compondo os 3 MFEs)
+│   │   ├── mfe-produtos/                                    ← agora consome @fiap/shared-ui
+│   │   ├── mfe-carrinho/                                    ← agora consome @fiap/shared-ui
+│   │   ├── mfe-checkout/                                    ← agora consome @fiap/shared-ui
+│   │   └── mfe-notificacoes/                                ← NOVO MFE
+│   │       ├── federation.config.js                         ← exposes ./Sino e ./Pagina
+│   │       └── src/app/
+│   │           ├── sino-notificacoes.component.ts           ← componente único
+│   │           ├── notificacoes-page.component.ts           ← página com router-outlet
+│   │           ├── notificacoes-lista.component.ts          ← sub-rota interna
+│   │           ├── notificacoes-config.component.ts         ← sub-rota interna
+│   │           └── notificacoes.service.ts                  ← signal de contagem (escopo do remote)
+│   └── projects/shared-ui/                                  ← NOVA LIB
+│       ├── ng-package.json
+│       ├── package.json
+│       └── src/
+│           ├── public-api.ts
+│           └── lib/
+│               ├── ui-button.component.ts
+│               └── tokens.css                               ← :root { --fiap-cor-primaria: ...; }
+└── .gitignore                                               ← + src/projects/host/public/federation.manifest.json
+```
 
----
+## Próxima aula
 
-## Conceitos aplicados
-
-- **Workspace multi-app** — um único repositório com `host` e remotes independentes.
-- **Native Federation** — implementação de Module Federation nativa para Angular (sem Webpack), baseada em ES Modules e import maps.
-- **Dynamic host** — o host resolve os remotes em runtime via manifesto JSON, sem acoplamento em tempo de build.
-- **`loadRemoteModule`** — função que baixa e instancia um componente de outro app em tempo de execução.
-- **Composição vs. roteamento** — dois padrões distintos de integração: múltiplos MFEs numa mesma página ou cada MFE isolado em sua rota.
-- **Signals e `computed`** — estado reativo no `mfe-carrinho` sem necessidade de bibliotecas externas.
+A **Aula 3** — *Integração Frontend-Backend: Comunicação, Autenticação e Controle de Acesso* — pega exatamente esse projeto e adiciona: serviço de autenticação compartilhado, comunicação entre MFEs, interceptors HTTP, e proteção de rotas.

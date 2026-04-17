@@ -1,0 +1,48 @@
+
+    <header class="nav" [class.is-scrolled]="scrolled()">
+      <div class="nav__inner">
+        <a routerLink="/" class="brand" aria-label="FIAP Store — inicio">
+          <span class="brand__mark" aria-hidden="true">F</span>
+          <span class="brand__word">FIAP<span class="brand__word--thin">STORE</span></span>
+        </a>
+
+        <nav class="nav__links" aria-label="Navegacao principal" aria-hidden="true"></nav>
+
+        <div class="nav__actions">
+          <div class="nav__cart" data-mfe="mfe-carrinho">
+            <ui-remote-outlet
+              [loader]="carregarCarrinho"
+              displayName="Carrinho"
+              [retry]="retryCarrinho"
+              [compact]="true"
+            />
+          </div>
+
+          <div class="nav__sino" data-mfe="mfe-notificacoes">
+            <ui-remote-outlet
+              [loader]="carregarSino"
+              displayName="Notificacoes"
+              [retry]="retrySino"
+              [compact]="true"
+            />
+          </div>
+
+          <div class="avatar" aria-label="Aluno FIAP">AF</div>
+
+          <button
+            type="button"
+            class="hamburger"
+            [attr.aria-expanded]="menuOpen()"
+            aria-label="Abrir menu"
+            (click)="toggleMenu()"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+
+    </header>
+
+    <main class="shell">
+      <router-outlet />
+    </main>

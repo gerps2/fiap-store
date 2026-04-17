@@ -73,8 +73,12 @@
                 "input": "projects/host/public"
               }
             ],
-            "styles": ["projects/host/src/styles.css"],
-            "polyfills": ["es-module-shims"]
+            "styles": [
+              "projects/host/src/styles.css"
+            ],
+            "polyfills": [
+              "es-module-shims"
+            ]
           },
           "configurations": {
             "production": {
@@ -184,8 +188,12 @@
                 "input": "projects/mfe-produtos/public"
               }
             ],
-            "styles": ["projects/mfe-produtos/src/styles.css"],
-            "polyfills": ["es-module-shims"]
+            "styles": [
+              "projects/mfe-produtos/src/styles.css"
+            ],
+            "polyfills": [
+              "es-module-shims"
+            ]
           },
           "configurations": {
             "production": {
@@ -295,8 +303,12 @@
                 "input": "projects/mfe-carrinho/public"
               }
             ],
-            "styles": ["projects/mfe-carrinho/src/styles.css"],
-            "polyfills": ["es-module-shims"]
+            "styles": [
+              "projects/mfe-carrinho/src/styles.css"
+            ],
+            "polyfills": [
+              "es-module-shims"
+            ]
           },
           "configurations": {
             "production": {
@@ -406,8 +418,12 @@
                 "input": "projects/mfe-checkout/public"
               }
             ],
-            "styles": ["projects/mfe-checkout/src/styles.css"],
-            "polyfills": ["es-module-shims"]
+            "styles": [
+              "projects/mfe-checkout/src/styles.css"
+            ],
+            "polyfills": [
+              "es-module-shims"
+            ]
           },
           "configurations": {
             "production": {
@@ -441,6 +457,121 @@
             },
             "development": {
               "buildTarget": "mfe-checkout:esbuild:development"
+            }
+          },
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4203
+          }
+        }
+      }
+    },
+    "mfe-notificacoes": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:component": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true
+        },
+        "@schematics/angular:resolver": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
+        }
+      },
+      "root": "projects/mfe-notificacoes",
+      "sourceRoot": "projects/mfe-notificacoes/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-architects/native-federation:build",
+          "options": {},
+          "configurations": {
+            "production": {
+              "target": "mfe-notificacoes:esbuild:production"
+            },
+            "development": {
+              "target": "mfe-notificacoes:esbuild:development",
+              "dev": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-architects/native-federation:build",
+          "options": {
+            "target": "mfe-notificacoes:serve-original:development",
+            "rebuildDelay": 500,
+            "dev": true,
+            "cacheExternalArtifacts": false,
+            "port": 0
+          }
+        },
+        "esbuild": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "projects/mfe-notificacoes/src/main.ts",
+            "tsConfig": "projects/mfe-notificacoes/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/mfe-notificacoes/public"
+              }
+            ],
+            "styles": [
+              "projects/mfe-notificacoes/src/styles.css"
+            ],
+            "polyfills": [
+              "es-module-shims"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-original": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "mfe-notificacoes:esbuild:production"
+            },
+            "development": {
+              "buildTarget": "mfe-notificacoes:esbuild:development"
             }
           },
           "defaultConfiguration": "development",

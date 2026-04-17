@@ -1,16 +1,26 @@
 {
-  "name": "fiap-mf-aula1",
+  "name": "fiap-mf-aula2",
   "version": "0.0.0",
-  "description": "FIAP PosTech - Arquitetura Angular para Aplicacoes de Alta Escala - Aula 1 - Esqueleto MFE com Native Federation",
+  "description": "FIAP PosTech - Arquitetura Angular para Aplicacoes de Alta Escala - Aula 2 - Module Federation: Isolamento, Compartilhamento e Versionamento",
   "scripts": {
     "ng": "ng",
-    "start": "concurrently \"npm run start:produtos\" \"npm run start:carrinho\" \"npm run start:checkout\" \"npm run start:host\"",
+    "manifest:local": "node ../scripts/use-manifest.mjs local",
+    "manifest:dev": "node ../scripts/use-manifest.mjs dev",
+    "manifest:solo": "node ../scripts/use-manifest.mjs solo",
+    "prestart": "npm run manifest:local",
+    "start": "concurrently \"npm run start:produtos\" \"npm run start:carrinho\" \"npm run start:checkout\" \"npm run start:notificacoes\" \"npm run start:host\"",
+    "prestart:local": "npm run manifest:local",
+    "start:local": "npm run start",
+    "prestart:solo": "npm run manifest:solo --",
+    "start:solo": "cross-var ng serve $npm_config_mfe --port $npm_config_port",
     "start:host": "ng serve host --port 4200 --open",
     "start:produtos": "ng serve mfe-produtos --port 4201",
     "start:carrinho": "ng serve mfe-carrinho --port 4202",
     "start:checkout": "ng serve mfe-checkout --port 4203",
+    "start:notificacoes": "ng serve mfe-notificacoes --port 4204",
     "build": "ng build",
-    "build:all": "ng build host && ng build mfe-produtos && ng build mfe-carrinho && ng build mfe-checkout"
+    "build:shared-ui": "ng build shared-ui",
+    "build:all": "npm run build:shared-ui && ng build host && ng build mfe-produtos && ng build mfe-carrinho && ng build mfe-checkout && ng build mfe-notificacoes"
   },
   "private": true,
   "dependencies": {
