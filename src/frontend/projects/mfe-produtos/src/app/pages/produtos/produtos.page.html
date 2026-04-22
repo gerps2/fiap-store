@@ -10,7 +10,7 @@
           <div class="bloco">
             <span class="fiap-eyebrow">Categoria</span>
             <div class="chips chips--col">
-              @for (c of categorias; track c) {
+              @for (c of categorias(); track c) {
                 <button
                   class="fiap-chip"
                   [class.is-active]="categoriaAtiva() === c"
@@ -26,21 +26,6 @@
               <button class="fiap-chip" [class.is-active]="faixaPreco() === 'ate50'" (click)="togglePreco('ate50')">Ate R$ 50</button>
               <button class="fiap-chip" [class.is-active]="faixaPreco() === '50a150'" (click)="togglePreco('50a150')">R$ 50-150</button>
               <button class="fiap-chip" [class.is-active]="faixaPreco() === '150mais'" (click)="togglePreco('150mais')">R$ 150+</button>
-            </div>
-          </div>
-
-          <div class="bloco">
-            <span class="fiap-eyebrow">Avaliacao minima</span>
-            <div class="chips chips--row">
-              @for (n of [4, 3, 2]; track n) {
-                <button
-                  class="fiap-chip chip-star"
-                  [class.is-active]="avaliacaoMin() === n"
-                  (click)="toggleAvaliacao(n)"
-                >
-                  <span class="star">*</span>{{ n }}+
-                </button>
-              }
             </div>
           </div>
 
@@ -60,7 +45,6 @@
                 <option value="relevancia">Relevancia</option>
                 <option value="preco-asc">Preco: menor primeiro</option>
                 <option value="preco-desc">Preco: maior primeiro</option>
-                <option value="avaliacao">Melhor avaliados</option>
               </select>
             </label>
           </header>
@@ -84,18 +68,9 @@
                 <article class="fiap-product-card">
                   <div class="fiap-product-card__media">
                     <div class="media-icon" [innerHTML]="iconeDoProduto(p.icon)"></div>
-                    @if (p.tag) {
-                      <span
-                        class="fiap-product-card__badge"
-                        [class.fiap-product-card__badge--sale]="p.tag === 'OFERTA'"
-                      >{{ p.tag }}</span>
-                    }
+                    <span class="fiap-product-card__badge">{{ p.categoria }}</span>
                   </div>
                   <div class="fiap-product-card__body">
-                    <div class="fiap-product-card__rating">
-                      <span class="stars" [innerHTML]="estrelasDe(p.rating)"></span>
-                      <span class="rating-count">({{ p.avaliacoes }})</span>
-                    </div>
                     <h3 class="fiap-product-card__name">{{ p.nome }}</h3>
                     <div class="fiap-product-card__price">R$ {{ p.preco | number:'1.2-2' }}</div>
                     <button class="fiap-btn-primary add" (click)="adicionar(p)">Adicionar</button>

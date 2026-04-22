@@ -2,19 +2,18 @@ import { inject, Provider, EnvironmentProviders } from '@angular/core';
 import { provideApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { ApolloLink, InMemoryCache, from } from '@apollo/client/core';
-import { API_BASE_URL } from '@fiap/shared-context';
+import { API_BASE_URL } from './api-base-url.token';
 
 const CSRF_COOKIE = 'csrf_token';
 
 function readCookie(name: string): string | null {
-  const match = typeof document !== 'undefined'
-    ? document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`))
-    : null;
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp(`(?:^|;\\s*)${name}=([^;]+)`));
   return match ? decodeURIComponent(match[1]) : null;
 }
 
 /**
- * Configura o Apollo Client único do host (shared entre MFEs via Native Federation).
+ * Configura o Apollo Client do fiap-store com cookies httpOnly + CSRF.
  * Cadeia de links: csrfLink → httpLink. ErrorLink entra no V4.
  */
 export function provideStoreApollo(): Provider | EnvironmentProviders {

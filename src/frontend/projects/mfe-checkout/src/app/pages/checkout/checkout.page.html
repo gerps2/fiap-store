@@ -135,9 +135,9 @@
           <aside class="resumo">
             <h3 class="resumo-title">Resumo do pedido</h3>
             <ul class="resumo-itens">
-              @for (it of itens; track it.nome) {
+              @for (it of itens(); track it.nome) {
                 <li class="item">
-                  <span class="thumb" [style.background]="it.grad">{{ it.icon }}</span>
+                  <span class="thumb">🛍️</span>
                   <div class="item-info">
                     <span class="item-nome">{{ it.nome }}</span>
                     <span class="item-qty">Qtd {{ it.qty }}</span>
@@ -145,11 +145,16 @@
                   <span class="item-preco">{{ formatBRL(it.preco) }}</span>
                 </li>
               }
+              @if (itens().length === 0) {
+                <li class="item">
+                  <span class="item-nome">Carrinho vazio</span>
+                </li>
+              }
             </ul>
             <hr class="divider" />
-            <div class="line"><span>Subtotal</span><strong>{{ formatBRL(subtotal) }}</strong></div>
+            <div class="line"><span>Subtotal</span><strong>{{ formatBRL(subtotal()) }}</strong></div>
             @if (formaPagamento() === 'pix') {
-              <div class="line success"><span>Desconto Pix</span><strong>-{{ formatBRL(subtotal * 0.05) }}</strong></div>
+              <div class="line success"><span>Desconto Pix</span><strong>-{{ formatBRL(subtotal() * 0.05) }}</strong></div>
             }
             <div class="line success"><span>Frete</span><strong>Grátis</strong></div>
             <div class="line total"><span>Total</span><strong>{{ formatBRL(totalFinal()) }}</strong></div>

@@ -7,7 +7,9 @@
   },
   "include": [
     "src/**/*.ts",
-    "../shared-ui/src/**/*.ts"
+    "../shared-ui/src/**/*.ts",
+    "../shared-ui/src/index.ts",
+    "../shared-ui/styles/index.ts"
   ],
   "exclude": [
     "src/**/*.spec.ts"
