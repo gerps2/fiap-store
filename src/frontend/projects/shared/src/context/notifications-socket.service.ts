@@ -2,7 +2,7 @@ import { DestroyRef, Injectable, inject } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { API_BASE_URL } from './api-base-url.token';
 import { NotificationHubService } from './notification-hub.service';
-import type { NotifKind } from './graphql/notifications.gql';
+import type { NotifKind } from '../graphql/notifications.gql';
 
 const NAMESPACE = '/ws/notifications';
 const EVENT_NEW = 'notification:new';

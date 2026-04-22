@@ -11,7 +11,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Apollo, QueryRef } from 'apollo-angular';
-import { CHECKOUT, MY_CART, type CartDto, type OrderDto } from '@fiap/shared-context';
+import { CHECKOUT, MY_CART, type CartDto, type OrderDto } from '@fiap/shared';
 
 type FormaPagamento = 'cartao' | 'pix' | 'boleto';
 

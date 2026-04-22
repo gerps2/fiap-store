@@ -1,0 +1,18 @@
+{
+  "name": "@fiap/shared",
+  "version": "2.0.0",
+  "description": "FIAP Store — lib unica: design system (ui/) + contexto e services (context/) + queries GraphQL (graphql/). Substitui as libs antigas @fiap/shared-ui e @fiap/shared-context.",
+  "peerDependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/router": "^21.0.0"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./fesm2022/fiap-shared.mjs"
+    },
+    "./styles/tokens.css": "./styles/tokens.css"
+  }
+}

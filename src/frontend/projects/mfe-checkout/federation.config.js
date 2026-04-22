@@ -10,7 +10,7 @@ module.exports = withNativeFederation({
   },
   skip: [
     'rxjs/ajax', 'rxjs/fetch', 'rxjs/testing', 'rxjs/webSocket',
-    '@fiap/shared-ui', '@fiap/shared-context',
+    '@fiap/shared',
     'react', 'react-dom', 'react-dom/server', 'relay-runtime',
     '@apollo/client/react',
     '@apollo/client/react/hoc',

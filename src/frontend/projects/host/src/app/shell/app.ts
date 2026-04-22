@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
-import { UiRemoteOutletComponent, type UiRemoteLoader } from '@fiap/shared-ui';
+import { UiRemoteOutletComponent, type UiRemoteLoader } from '@fiap/shared';
 
 /** Shell principal — navbar dark sticky com wordmark, nav central e acoes a direita. */
 @Component({

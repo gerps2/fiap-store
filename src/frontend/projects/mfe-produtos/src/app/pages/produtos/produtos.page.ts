@@ -13,7 +13,7 @@ import {
   LIST_PRODUCTS,
   type CartDto,
   type ProductDto,
-} from '@fiap/shared-context';
+} from '@fiap/shared';
 
 interface Produto {
   readonly id: string;

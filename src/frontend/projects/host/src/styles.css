@@ -1,7 +1,7 @@
 /* Estilos globais do host — fonts, tokens, primitives. */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
-@import '@fiap/shared-ui/styles/tokens.css';
-@import '@fiap/shared-ui/styles/primitives.css';
+@import '@fiap/shared/styles/tokens.css';
+@import '@fiap/shared/styles/primitives.css';
 
 html, body {
   margin: 0;

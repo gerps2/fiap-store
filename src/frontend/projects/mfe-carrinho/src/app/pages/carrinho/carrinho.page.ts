@@ -18,7 +18,7 @@ import {
   UPDATE_CART_ITEM,
   REMOVE_FROM_CART,
   type CartDto,
-} from '@fiap/shared-context';
+} from '@fiap/shared';
 
 type ItemIcon = 'shirt' | 'cup' | 'book' | 'laptop';
 

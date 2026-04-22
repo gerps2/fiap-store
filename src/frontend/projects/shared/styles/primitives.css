@@ -1,5 +1,5 @@
 /*
- * @fiap/shared-ui — FIAP Store primitives (classes utilitárias)
+ * @fiap/shared — FIAP Store primitives (classes utilitárias)
  * Classes compartilhadas que qualquer MFE pode usar via a folha global.
  * Regra: todos os valores vêm de tokens (tokens.css). Nenhum valor cru aqui.
  */

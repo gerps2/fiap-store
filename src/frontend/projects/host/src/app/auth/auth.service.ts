@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { API_BASE_URL, UserContextService, type UserCtx } from '@fiap/shared-context';
+import { API_BASE_URL, UserContextService, type UserCtx } from '@fiap/shared';
 
 interface AuthResponse {
   user: UserCtx;

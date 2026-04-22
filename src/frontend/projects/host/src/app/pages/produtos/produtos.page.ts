@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Type } from '@angular/core';
 import { loadRemoteModule } from '@angular-architects/native-federation';
-import { UiRemoteOutletComponent, type UiRemoteLoader } from '@fiap/shared-ui';
+import { UiRemoteOutletComponent, type UiRemoteLoader } from '@fiap/shared';
 
 /** Página principal — catálogo full-width com skeleton + error state resilientes. */
 @Component({

@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanMatchFn, Router, UrlTree } from '@angular/router';
-import { UserContextService } from '@fiap/shared-context';
+import { UserContextService } from '@fiap/shared';
 
 /**
  * Guard de rota que exige usuário autenticado. Faz hydrate lazy se ainda

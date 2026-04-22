@@ -18,7 +18,7 @@ import {
   UserContextService,
   type HubToast,
   type NotificationDto,
-} from '@fiap/shared-context';
+} from '@fiap/shared';
 
 interface NotifView {
   id: string;
