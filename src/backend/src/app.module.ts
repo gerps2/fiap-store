@@ -6,6 +6,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'node:path';
 import { AppController } from './app.controller';
 import { AppResolver } from './app.resolver';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { AppResolver } from './app.resolver';
       subscriptions: { 'graphql-ws': true },
       context: (ctx: { req?: unknown; res?: unknown; extra?: unknown }) => ctx,
     }),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppResolver],
