@@ -6,8 +6,8 @@
  *   node scripts/use-manifest.mjs dev
  *   node scripts/use-manifest.mjs solo --mfe=mfe-notificacoes
  *
- * Lê os templates em src/projects/host/public/federation.manifest.{local,dev,solo}.json
- * e grava o resultado em src/projects/host/public/federation.manifest.json.
+ * Lê os templates em src/frontend/projects/host/public/federation.manifest.{local,dev,solo}.json
+ * e grava o resultado em src/frontend/projects/host/public/federation.manifest.json.
  *
  * Comportamento:
  *  - local : copia federation.manifest.local.json (todos em localhost).
@@ -22,7 +22,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(__dirname, '..', 'src', 'projects', 'host', 'public');
+const ROOT = resolve(__dirname, '..', 'src', 'frontend', 'projects', 'host', 'public');
 
 const mode = argv[2];
 if (!['local', 'dev', 'solo'].includes(mode)) {

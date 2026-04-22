@@ -1,12 +1,12 @@
 {
-  "name": "fiap-mf-aula2",
+  "name": "@fiap-store/frontend",
   "version": "0.0.0",
-  "description": "FIAP PosTech - Arquitetura Angular para Aplicacoes de Alta Escala - Aula 2 - Module Federation: Isolamento, Compartilhamento e Versionamento",
+  "description": "FIAP PosTech - Arquitetura Angular para Aplicacoes de Alta Escala - Frontend (host + MFEs + shared libs)",
   "scripts": {
     "ng": "ng",
-    "manifest:local": "node ../scripts/use-manifest.mjs local",
-    "manifest:dev": "node ../scripts/use-manifest.mjs dev",
-    "manifest:solo": "node ../scripts/use-manifest.mjs solo",
+    "manifest:local": "node ../../scripts/use-manifest.mjs local",
+    "manifest:dev": "node ../../scripts/use-manifest.mjs dev",
+    "manifest:solo": "node ../../scripts/use-manifest.mjs solo",
     "prestart": "npm run manifest:local",
     "start": "concurrently \"npm run start:produtos\" \"npm run start:carrinho\" \"npm run start:checkout\" \"npm run start:notificacoes\" \"npm run start:host\"",
     "prestart:local": "npm run manifest:local",

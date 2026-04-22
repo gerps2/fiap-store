@@ -5,6 +5,12 @@ node_modules/
 dist/
 .angular/
 
+# Backend (NestJS + SQLite — a partir da Aula 3)
+src/backend/dist/
+src/backend/db.sqlite
+src/backend/db.sqlite-journal
+src/backend/.keys/
+
 # Logs
 *.log
 npm-debug.log*
