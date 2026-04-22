@@ -1,0 +1,37 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'node:path';
+import { AppController } from './app.controller';
+import { AppResolver } from './app.resolver';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'better-sqlite3',
+        database: process.env.DATABASE_PATH ?? './db.sqlite',
+        entities: [join(__dirname, '**', '*.entity.{ts,js}')],
+        migrations: [join(__dirname, 'migrations', '*.{ts,js}')],
+        migrationsRun: true,
+        synchronize: false,
+        autoLoadEntities: true,
+      }),
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src', 'schema.gql'),
+      sortSchema: true,
+      playground: false,
+      introspection: true,
+      subscriptions: { 'graphql-ws': true },
+      context: (ctx: { req?: unknown; res?: unknown; extra?: unknown }) => ctx,
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppResolver],
+})
+export class AppModule {}
