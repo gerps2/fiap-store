@@ -96,6 +96,7 @@ type Product {
 
 type Query {
   allOrders: [Order!]!
+  boom: String!
   categories: [Category!]!
   hello: String!
   listProducts(category: String, search: String): [Product!]!
