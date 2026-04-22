@@ -17,7 +17,9 @@
     "baseUrl": "./",
     "paths": {
       "@fiap/shared-ui": ["./projects/shared-ui/src/public-api.ts"],
-      "@fiap/shared-ui/*": ["./projects/shared-ui/*"]
+      "@fiap/shared-ui/*": ["./projects/shared-ui/*"],
+      "@fiap/shared-context": ["./projects/shared-context/src/public-api.ts"],
+      "@fiap/shared-context/*": ["./projects/shared-context/*"]
     }
   },
   "angularCompilerOptions": {

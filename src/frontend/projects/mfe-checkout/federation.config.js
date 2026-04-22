@@ -14,5 +14,6 @@ module.exports = withNativeFederation({
     'rxjs/testing',
     'rxjs/webSocket',
     '@fiap/shared-ui',
+    '@fiap/shared-context',
   ],
 });

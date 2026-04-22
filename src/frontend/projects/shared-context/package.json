@@ -1,0 +1,16 @@
+{
+  "name": "@fiap/shared-context",
+  "version": "1.0.0",
+  "description": "FIAP PosTech - Contexto compartilhado entre MFEs (usuario logado, grupos, hydrate via /users/me).",
+  "peerDependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./fesm2022/fiap-shared-context.mjs"
+    }
+  }
+}
