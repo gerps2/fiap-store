@@ -7,5 +7,8 @@ export * from './lib/api-base-url.token';
 export * from './lib/user-context.service';
 export * from './lib/has-group.directive';
 export * from './lib/apollo.provider';
+export * from './lib/notification-hub.service';
+export * from './lib/notifications-socket.service';
 export * from './lib/graphql/catalog.gql';
 export * from './lib/graphql/cart.gql';
+export * from './lib/graphql/notifications.gql';

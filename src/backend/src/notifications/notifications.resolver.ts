@@ -1,13 +1,17 @@
-import { Args, ID, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { Notification } from './notification.entity';
 import { NotificationsService } from './notifications.service';
-import { pubsub, NOTIFICATION_ADDED } from './pubsub';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CsrfGuard } from '../auth/csrf.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import type { AccessTokenPayload } from '../auth/jwt-signer.service';
 
+/**
+ * Histórico e mark-as-read ficam em GraphQL (grafo do domínio).
+ * Real-time (push de novas notificações) vai via WebSocket/Socket.IO no NotificationsGateway —
+ * protocolos separados com propósitos claros: GraphQL = leitura e mutação; WebSocket = push.
+ */
 @Resolver(() => Notification)
 @UseGuards(JwtAuthGuard)
 export class NotificationsResolver {
@@ -25,16 +29,5 @@ export class NotificationsResolver {
     @Args('id', { type: () => ID }) id: string,
   ): Promise<Notification> {
     return this.svc.markAsRead(user.sub, id);
-  }
-
-  /** Stream em tempo real filtrado pelo userId do JWT. */
-  @Subscription(() => Notification, {
-    filter: (payload, _vars, context) => {
-      const userId = context?.req?.user?.sub ?? context?.extra?.user?.sub;
-      return payload?.[NOTIFICATION_ADDED]?.userId === userId;
-    },
-  })
-  notificationAdded() {
-    return pubsub.asyncIterator(NOTIFICATION_ADDED);
   }
 }

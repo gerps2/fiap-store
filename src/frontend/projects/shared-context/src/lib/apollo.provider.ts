@@ -13,8 +13,16 @@ function readCookie(name: string): string | null {
 }
 
 /**
- * Configura o Apollo Client do fiap-store com cookies httpOnly + CSRF.
- * Cadeia de links: csrfLink → httpLink. ErrorLink entra no V4.
+ * Apollo Client do fiap-store.
+ *
+ * Dicotomia do transporte:
+ *  - Queries/Mutations (domínio) → csrfLink → httpLink contra /graphql
+ *    (cookies httpOnly no `withCredentials: true`, CSRF double-submit)
+ *  - Notificações real-time NÃO passam por aqui — estão no
+ *    `NotificationsSocketService` (Socket.IO em /ws/notifications)
+ *
+ * Separar os dois deixa a arquitetura didática: GraphQL é pra leitura/mutação
+ * do grafo; WebSocket é pra push do servidor.
  */
 export function provideStoreApollo(): Provider | EnvironmentProviders {
   return provideApollo(() => {
@@ -34,10 +42,7 @@ export function provideStoreApollo(): Provider | EnvironmentProviders {
     return {
       link: from([
         csrfLink,
-        httpLink.create({
-          uri: `${apiBase}/graphql`,
-          withCredentials: true,
-        }),
+        httpLink.create({ uri: `${apiBase}/graphql`, withCredentials: true }),
       ]),
       cache: new InMemoryCache(),
     };

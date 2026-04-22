@@ -1,17 +1,19 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification, NotificationKind } from './notification.entity';
-import { pubsub, NOTIFICATION_ADDED } from './pubsub';
+import { NotificationsGateway } from './notifications.gateway';
 
 @Injectable()
 export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
     private readonly repo: Repository<Notification>,
+    @Inject(forwardRef(() => NotificationsGateway))
+    private readonly gateway: NotificationsGateway,
   ) {}
 
-  /** Persiste e publica uma notificação para o usuário dono. */
+  /** Persiste e empurra a notificação por WebSocket apenas pro room do dono. */
   async publish(
     userId: string,
     kind: NotificationKind,
@@ -21,7 +23,13 @@ export class NotificationsService {
     const notif = await this.repo.save(
       this.repo.create({ userId, kind, title, body, readAt: null }),
     );
-    await pubsub.publish(NOTIFICATION_ADDED, { [NOTIFICATION_ADDED]: notif });
+    this.gateway.emitToUser(userId, {
+      id: notif.id,
+      kind: notif.kind,
+      title: notif.title,
+      body: notif.body,
+      createdAt: notif.createdAt.toISOString?.() ?? notif.createdAt,
+    });
     return notif;
   }
 

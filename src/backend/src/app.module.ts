@@ -39,7 +39,6 @@ const isProd = process.env.NODE_ENV === 'production';
       sortSchema: true,
       playground: false,
       introspection: true,
-      subscriptions: { 'graphql-ws': true },
       context: (ctx: { req?: unknown; res?: unknown; extra?: unknown }) => ctx,
       formatError: (formatted: GraphQLFormattedError): GraphQLFormattedError => {
         if (!isProd) return formatted;

@@ -105,7 +105,3 @@ type Query {
   myOrders: [Order!]!
   product(id: ID!): Product!
 }
-
-type Subscription {
-  notificationAdded: Notification!
-}

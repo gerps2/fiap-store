@@ -39,6 +39,7 @@
     "graphql": "^16.13.2",
     "graphql-ws": "^6.0.8",
     "rxjs": "~7.8.0",
+    "socket.io-client": "^4.8.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
