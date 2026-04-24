@@ -87,7 +87,7 @@ export class SinoNotificacoesComponent {
         leaving: false,
       })),
     ),
-    remover: (id: number): void => this.hub.dismiss(id),
+    remover: (id: string): void => this.hub.dismiss(id),
   };
 
   constructor() {
