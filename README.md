@@ -53,6 +53,16 @@ fiap-store/
 
 Cada aula parte da branch anterior. Tags marcam checkpoints relevantes dentro da branch.
 
+## Branches da Aula 3
+
+A Aula 3 é dividida em duas partes, cada uma com uma branch dedicada pra facilitar o acompanhamento vídeo a vídeo:
+
+| Branch | Descrição |
+|---|---|
+| `aula-03` | Estado de partida — frontend reorganizado em `src/frontend/`, backend NestJS bootstrapado em `src/backend/`, lib `@fiap/shared` unificada. Sem Apollo, sem auth funcional. |
+| `aula-03-parte-1` | Estado após V2 — Apollo Client + login REST + cookies httpOnly + CSRF double-submit + refresh rotativo com reuse detection. |
+| `aula-03-parte-2` | Estado final — RBAC em 3 camadas (`*hasGroup` + `canMatch` + `@Roles`) + exception filter com traceId + ErrorLink + hub via BroadcastChannel + Socket.IO com `io.use` + rooms `user:<sub>`. |
+
 ---
 
 ## Apps após a branch atual
