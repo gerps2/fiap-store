@@ -20,7 +20,12 @@
     "start:notificacoes": "ng serve mfe-notificacoes --port 4204",
     "build": "ng build",
     "build:shared-ui": "ng build shared-ui",
-    "build:all": "npm run build:shared-ui && ng build host && ng build mfe-produtos && ng build mfe-carrinho && ng build mfe-checkout && ng build mfe-notificacoes"
+    "build:all": "npm run build:shared-ui && ng build host && ng build mfe-produtos && ng build mfe-carrinho && ng build mfe-checkout && ng build mfe-notificacoes",
+    "test": "ng test --watch=false",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadless --code-coverage",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
+    "prepare": "husky"
   },
   "private": true,
   "dependencies": {
@@ -52,6 +57,8 @@
     "@graphql-tools/utils": "^11.0.1",
     "concurrently": "^9.0.0",
     "crossws": "^0.4.5",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "relay-runtime": "^20.1.1",
