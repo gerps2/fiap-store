@@ -118,6 +118,15 @@
           "options": {
             "port": 4200
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/host/**/*.ts",
+              "projects/host/**/*.html"
+            ]
+          }
         }
       }
     },
@@ -232,6 +241,15 @@
           "defaultConfiguration": "development",
           "options": {
             "port": 4201
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/mfe-produtos/**/*.ts",
+              "projects/mfe-produtos/**/*.html"
+            ]
           }
         }
       }
@@ -348,6 +366,15 @@
           "options": {
             "port": 4202
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/mfe-carrinho/**/*.ts",
+              "projects/mfe-carrinho/**/*.html"
+            ]
+          }
         }
       }
     },
@@ -463,6 +490,15 @@
           "options": {
             "port": 4203
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/mfe-checkout/**/*.ts",
+              "projects/mfe-checkout/**/*.html"
+            ]
+          }
         }
       }
     },
@@ -577,6 +613,15 @@
           "defaultConfiguration": "development",
           "options": {
             "port": 4203
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/mfe-notificacoes/**/*.ts",
+              "projects/mfe-notificacoes/**/*.html"
+            ]
           }
         }
       }

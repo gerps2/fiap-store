@@ -49,6 +49,10 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^21.2.7",
+    "@angular-eslint/builder": "^21.3.1",
+    "@angular-eslint/eslint-plugin": "^21.3.1",
+    "@angular-eslint/eslint-plugin-template": "^21.3.1",
+    "@angular-eslint/template-parser": "^21.3.1",
     "@angular/build": "^21.2.7",
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.0",
@@ -57,11 +61,13 @@
     "@graphql-tools/utils": "^11.0.1",
     "concurrently": "^9.0.0",
     "crossws": "^0.4.5",
+    "eslint": "^10.2.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "relay-runtime": "^20.1.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.59.1"
   }
 }
