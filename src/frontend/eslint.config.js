@@ -31,6 +31,8 @@ module.exports = tseslint.config(
       ],
       // Variáveis prefixadas com _ são intencionalmente não usadas
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      // Aula 4: any explícito é bloqueio duro — usado na demo do pre-commit (Husky + lint-staged)
+      "@typescript-eslint/no-explicit-any": "error",
     },
   },
   {

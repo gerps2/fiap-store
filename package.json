@@ -1,0 +1,12 @@
+{
+  "name": "fiap-store",
+  "version": "0.0.0",
+  "description": "FIAP PosTech - Aula 4 - CI/CD e Governança Técnica - Monorepo wrapper para Husky/lint-staged",
+  "private": true,
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}

@@ -91,7 +91,7 @@ export class ProdutosComponent {
     const faixa = this.faixaPreco();
     const ord = this.ordenacao();
 
-    let lista = this.produtos().filter((p) => {
+    const lista = this.produtos().filter((p) => {
       if (cat !== 'Todos' && p.categoria !== cat) return false;
       if (faixa === 'ate50' && p.preco > 50) return false;
       if (faixa === '50a150' && (p.preco < 50 || p.preco > 150)) return false;
@@ -133,7 +133,7 @@ export class ProdutosComponent {
       if (res?.data?.addToCart) {
         window.dispatchEvent(new CustomEvent('fiap:cart:updated', { detail: res.data.addToCart }));
       }
-    } catch (err) {
+    } catch {
       window.dispatchEvent(new CustomEvent('fiap:toast', {
         detail: { kind: 'ERROR', title: 'Erro', body: 'Não foi possível adicionar ao carrinho.' },
       }));
