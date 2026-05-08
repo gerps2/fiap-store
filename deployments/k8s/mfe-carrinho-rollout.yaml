@@ -4,7 +4,7 @@ metadata:
   name: mfe-carrinho
   namespace: fiap-store
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mfe-carrinho
