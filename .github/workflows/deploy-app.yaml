@@ -23,6 +23,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/fiap-store
+  DOMAIN: gerson-prudencio.com.br
+  API_URL: https://gerson-prudencio.com.br/api
 
 jobs:
   build-and-push:
