@@ -1,0 +1,7 @@
+{
+  "_comentario": "Template usado pelo modo `solo`. O script use-manifest.mjs ignora este arquivo e gera o manifest a partir de dev.json + substituição do --mfe=<nome> pela URL local.",
+  "mfe-produtos": "https://mfe-produtos.fiap-alta-escala.dev/remoteEntry.json",
+  "mfe-carrinho": "https://mfe-carrinho.fiap-alta-escala.dev/remoteEntry.json",
+  "mfe-checkout": "https://mfe-checkout.fiap-alta-escala.dev/remoteEntry.json",
+  "mfe-notificacoes": "https://mfe-notificacoes.fiap-alta-escala.dev/remoteEntry.json"
+}

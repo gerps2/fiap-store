@@ -1,0 +1,6 @@
+{
+  "mfe-produtos":     "https://gerson-prudencio.com.br/produtos/remoteEntry.json",
+  "mfe-carrinho":     "https://gerson-prudencio.com.br/carrinho/remoteEntry.json",
+  "mfe-checkout":     "https://gerson-prudencio.com.br/checkout/remoteEntry.json",
+  "mfe-notificacoes": "https://gerson-prudencio.com.br/notificacoes/remoteEntry.json"
+}

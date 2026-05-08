@@ -1,0 +1,31 @@
+
+    :host {
+      display: block;
+      padding: var(--space-8) clamp(16px, 4vw, 48px);
+      background: var(--fiap-surface);
+      min-height: calc(100vh - var(--navbar-height));
+    }
+    .layout { max-width: 1720px; margin: 0 auto; }
+    .main { min-width: 0; }
+
+    .sk { padding: var(--space-6) 0; }
+    .sk__header { margin-bottom: var(--space-8); }
+    .sk__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--space-6);
+    }
+    .sk-card {
+      background: var(--fiap-white);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .sk-card__media { aspect-ratio: 4/3; border-radius: var(--radius-md); }
+    .sk-card__line { height: 14px; border-radius: var(--radius-xs); }
+    .sk-card__line--lg { width: 80%; height: 18px; }
+    .sk-card__line--md { width: 50%; }
+    .sk-card__line--sm { width: 35%; }

@@ -1,0 +1,107 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Cart {
+  createdAt: DateTime!
+  id: ID!
+  items: [CartItem!]!
+  totalCents: Int!
+}
+
+type CartItem {
+  id: ID!
+  product: Product!
+  quantity: Int!
+}
+
+type Category {
+  id: ID!
+  name: String!
+  slug: String!
+}
+
+input CreateProductInput {
+  categorySlug: String!
+  description: String!
+  imageUrl: String
+  name: String!
+  priceCents: Int!
+  sku: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  addToCart(productId: ID!, quantity: Int! = 1): Cart!
+  checkout: Order!
+  createProduct(input: CreateProductInput!): Product!
+  markAsRead(id: ID!): Notification!
+  removeFromCart(itemId: ID!): Cart!
+  updateCartItem(itemId: ID!, quantity: Int!): Cart!
+}
+
+type Notification {
+  body: String!
+  createdAt: DateTime!
+  id: ID!
+  kind: NotificationKind!
+  readAt: DateTime
+  title: String!
+}
+
+enum NotificationKind {
+  ERROR
+  INFO
+  SUCCESS
+  WARNING
+}
+
+type Order {
+  createdAt: DateTime!
+  id: ID!
+  items: [OrderItemSnapshot!]!
+  status: OrderStatus!
+  totalCents: Int!
+}
+
+type OrderItemSnapshot {
+  name: String!
+  priceCents: Int!
+  productId: String!
+  quantity: Int!
+  sku: String!
+}
+
+enum OrderStatus {
+  CANCELLED
+  PAID
+  PENDING
+  SHIPPED
+}
+
+type Product {
+  category: Category!
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  imageUrl: String
+  name: String!
+  priceCents: Int!
+  sku: String!
+}
+
+type Query {
+  allOrders: [Order!]!
+  boom: String!
+  categories: [Category!]!
+  hello: String!
+  listProducts(category: String, search: String): [Product!]!
+  myCart: Cart!
+  myNotifications: [Notification!]!
+  myOrders: [Order!]!
+  product(id: ID!): Product!
+}

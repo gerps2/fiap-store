@@ -1,0 +1,90 @@
+
+    <section class="mfe-boundary" data-mfe="mfe-produtos">
+      <div class="shell">
+        <aside class="sidebar">
+          <header class="sidebar__head">
+            <h3>Filtros</h3>
+            <button class="link" (click)="limparFiltros()">Limpar</button>
+          </header>
+
+          <div class="bloco">
+            <span class="fiap-eyebrow">Categoria</span>
+            <div class="chips chips--col">
+              @for (c of categorias(); track c) {
+                <button
+                  class="fiap-chip"
+                  [class.is-active]="categoriaAtiva() === c"
+                  (click)="categoriaAtiva.set(c)"
+                >{{ c }}</button>
+              }
+            </div>
+          </div>
+
+          <div class="bloco">
+            <span class="fiap-eyebrow">Faixa de preco</span>
+            <div class="chips chips--row">
+              <button class="fiap-chip" [class.is-active]="faixaPreco() === 'ate50'" (click)="togglePreco('ate50')">Ate R$ 50</button>
+              <button class="fiap-chip" [class.is-active]="faixaPreco() === '50a150'" (click)="togglePreco('50a150')">R$ 50-150</button>
+              <button class="fiap-chip" [class.is-active]="faixaPreco() === '150mais'" (click)="togglePreco('150mais')">R$ 150+</button>
+            </div>
+          </div>
+
+          <button class="fiap-btn-ghost clear" (click)="limparFiltros()">Limpar filtros</button>
+        </aside>
+
+        <div class="content">
+          <header class="content__head">
+            <div>
+              <span class="fiap-eyebrow">FIAP Store</span>
+              <h2 class="fiap-display">Catalogo</h2>
+              <p class="count">{{ produtosFiltrados().length }} itens encontrados</p>
+            </div>
+            <label class="ordenar">
+              <span>Ordenar</span>
+              <select [value]="ordenacao()" (change)="setOrdenacao($any($event.target).value)">
+                <option value="relevancia">Relevancia</option>
+                <option value="preco-asc">Preco: menor primeiro</option>
+                <option value="preco-desc">Preco: maior primeiro</option>
+              </select>
+            </label>
+          </header>
+
+          @if (carregando()) {
+            <div class="grid">
+              @for (i of skeletonArray; track i) {
+                <article class="skeleton-card">
+                  <div class="fiap-skeleton skeleton-media"></div>
+                  <div class="skeleton-lines">
+                    <div class="fiap-skeleton" style="height:14px;width:70%"></div>
+                    <div class="fiap-skeleton" style="height:14px;width:90%"></div>
+                    <div class="fiap-skeleton" style="height:14px;width:40%"></div>
+                  </div>
+                </article>
+              }
+            </div>
+          } @else {
+            <div class="grid">
+              @for (p of produtosFiltrados(); track p.id) {
+                <article class="fiap-product-card">
+                  <div class="fiap-product-card__media">
+                    <div class="media-icon" [innerHTML]="iconeDoProduto(p.icon)"></div>
+                    <span class="fiap-product-card__badge">{{ p.categoria }}</span>
+                  </div>
+                  <div class="fiap-product-card__body">
+                    <h3 class="fiap-product-card__name">{{ p.nome }}</h3>
+                    <div class="fiap-product-card__price">R$ {{ p.preco | number:'1.2-2' }}</div>
+                    <button class="fiap-btn-primary add" (click)="adicionar(p)">Adicionar</button>
+                  </div>
+                </article>
+              }
+              @if (produtosFiltrados().length === 0) {
+                <div class="empty">
+                  <p>Nenhum produto encontrado com os filtros atuais.</p>
+                  <button class="fiap-btn-ghost" (click)="limparFiltros()">Limpar filtros</button>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>

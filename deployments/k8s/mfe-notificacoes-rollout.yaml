@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: mfe-notificacoes
+  namespace: fiap-store
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mfe-notificacoes
+  template:
+    metadata:
+      labels:
+        app: mfe-notificacoes
+    spec:
+      containers:
+        - name: mfe-notificacoes
+          image: ghcr.io/gerps2/fiap-store-mfe-notificacoes:latest
+          ports:
+            - containerPort: 80
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: {}
+        - setWeight: 30
+        - pause: { duration: 60 }
+        - setWeight: 60
+        - pause: { duration: 60 }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mfe-notificacoes
+  namespace: fiap-store
+spec:
+  selector:
+    app: mfe-notificacoes
+  ports:
+    - port: 80
+      targetPort: 80

@@ -1,0 +1,182 @@
+
+    <div class="checkout-wrap fiap-container">
+      @if (!confirmado()) {
+        <header class="checkout-head">
+          <span class="fiap-eyebrow">CHECKOUT · PASSO 1 DE 1</span>
+          <h2 class="checkout-title">Finalizar seu pedido</h2>
+          <p class="checkout-sub">Preencha seus dados para concluir a compra.</p>
+        </header>
+
+        <div class="checkout-grid">
+          <form class="checkout-form" (ngSubmit)="finalizar()" #form="ngForm" novalidate>
+            <section class="card">
+              <span class="fiap-eyebrow">01. Contato</span>
+              <h3 class="card-title">Quem está comprando?</h3>
+              <div class="grid-2">
+                <label class="field">
+                  <span>Nome completo</span>
+                  <input type="text" [value]="nome()" (input)="nome.set(anyVal($event))" placeholder="Seu nome" required />
+                </label>
+                <label class="field">
+                  <span>E-mail</span>
+                  <input type="email" [value]="email()" (input)="email.set(anyVal($event))" placeholder="voce@exemplo.com" required />
+                </label>
+              </div>
+            </section>
+
+            <section class="card">
+              <span class="fiap-eyebrow">02. Entrega</span>
+              <h3 class="card-title">Para onde enviamos?</h3>
+              <div class="grid-address">
+                <label class="field col-cep">
+                  <span>CEP</span>
+                  <input type="text" maxlength="9" [value]="cep()" (input)="cep.set(anyVal($event))" placeholder="00000-000" />
+                </label>
+                <label class="field col-full">
+                  <span>Logradouro</span>
+                  <input type="text" [value]="logradouro()" (input)="logradouro.set(anyVal($event))" placeholder="Rua, Avenida..." />
+                </label>
+                <label class="field col-num">
+                  <span>Número</span>
+                  <input type="text" [value]="numero()" (input)="numero.set(anyVal($event))" placeholder="123" />
+                </label>
+                <label class="field col-flex">
+                  <span>Complemento</span>
+                  <input type="text" [value]="complemento()" (input)="complemento.set(anyVal($event))" placeholder="Apto, bloco..." />
+                </label>
+                <label class="field">
+                  <span>Bairro</span>
+                  <input type="text" [value]="bairro()" (input)="bairro.set(anyVal($event))" />
+                </label>
+                <label class="field">
+                  <span>Cidade</span>
+                  <input type="text" [value]="cidade()" (input)="cidade.set(anyVal($event))" />
+                </label>
+                <label class="field col-uf">
+                  <span>UF</span>
+                  <select [value]="uf()" (change)="uf.set(anyVal($event))">
+                    <option value="SP">SP</option>
+                    <option value="RJ">RJ</option>
+                    <option value="MG">MG</option>
+                    <option value="RS">RS</option>
+                    <option value="SC">SC</option>
+                  </select>
+                </label>
+              </div>
+            </section>
+
+            <section class="card">
+              <span class="fiap-eyebrow">03. Pagamento</span>
+              <h3 class="card-title">Como você prefere pagar?</h3>
+              <div class="pay-group">
+                @for (opt of opcoesPagamento; track opt.id) {
+                  <button type="button" class="pay-card" [class.selected]="formaPagamento() === opt.id" (click)="formaPagamento.set(opt.id)">
+                    <div class="pay-info">
+                      <strong>{{ opt.label }}</strong>
+                      @if (opt.badge) {
+                        <span class="pay-badge">{{ opt.badge }}</span>
+                      }
+                    </div>
+                    @if (formaPagamento() === opt.id) {
+                      <svg class="pay-check" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    }
+                  </button>
+                }
+              </div>
+
+              @switch (formaPagamento()) {
+                @case ('cartao') {
+                  <div class="pay-details">
+                    <label class="field col-full">
+                      <span>Número do cartão</span>
+                      <input type="text" maxlength="19" [value]="numeroCartao()" (input)="numeroCartao.set(anyVal($event))" placeholder="0000 0000 0000 0000" />
+                    </label>
+                    <div class="grid-2">
+                      <label class="field">
+                        <span>Validade</span>
+                        <input type="text" maxlength="5" [value]="validade()" (input)="validade.set(anyVal($event))" placeholder="MM/AA" />
+                      </label>
+                      <label class="field">
+                        <span>CVV</span>
+                        <input type="text" maxlength="3" [value]="cvv()" (input)="cvv.set(anyVal($event))" placeholder="123" />
+                      </label>
+                    </div>
+                    <label class="field col-full">
+                      <span>Nome impresso</span>
+                      <input type="text" [value]="nomeImpresso()" (input)="nomeImpresso.set(anyVal($event))" placeholder="Como está no cartão" />
+                    </label>
+                  </div>
+                }
+                @case ('pix') {
+                  <div class="pay-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span>Você receberá o QR Code ao confirmar o pedido.</span>
+                  </div>
+                }
+                @case ('boleto') {
+                  <div class="pay-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="1"></rect><line x1="7" y1="5" x2="7" y2="19"></line><line x1="11" y1="5" x2="11" y2="19"></line><line x1="17" y1="5" x2="17" y2="19"></line></svg>
+                    <span>Prazo de compensação: 2 dias úteis.</span>
+                  </div>
+                }
+              }
+            </section>
+
+            <div class="ctas">
+              <button type="submit" class="fiap-btn-primary btn-confirm" [disabled]="!formValido()">
+                Confirmar pedido · {{ formatBRL(totalFinal()) }}
+              </button>
+              <a routerLink="/carrinho" class="fiap-btn-ghost btn-back">← Voltar ao carrinho</a>
+            </div>
+          </form>
+
+          <aside class="resumo">
+            <h3 class="resumo-title">Resumo do pedido</h3>
+            <ul class="resumo-itens">
+              @for (it of itens(); track it.nome) {
+                <li class="item">
+                  <span class="thumb">🛍️</span>
+                  <div class="item-info">
+                    <span class="item-nome">{{ it.nome }}</span>
+                    <span class="item-qty">Qtd {{ it.qty }}</span>
+                  </div>
+                  <span class="item-preco">{{ formatBRL(it.preco) }}</span>
+                </li>
+              }
+              @if (itens().length === 0) {
+                <li class="item">
+                  <span class="item-nome">Carrinho vazio</span>
+                </li>
+              }
+            </ul>
+            <hr class="divider" />
+            <div class="line"><span>Subtotal</span><strong>{{ formatBRL(subtotal()) }}</strong></div>
+            @if (formaPagamento() === 'pix') {
+              <div class="line success"><span>Desconto Pix</span><strong>-{{ formatBRL(subtotal() * 0.05) }}</strong></div>
+            }
+            <div class="line success"><span>Frete</span><strong>Grátis</strong></div>
+            <div class="line total"><span>Total</span><strong>{{ formatBRL(totalFinal()) }}</strong></div>
+            <div class="secure">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Compra segura · SSL 256 bits</span>
+            </div>
+          </aside>
+        </div>
+      } @else {
+        <div class="sucesso">
+          <div class="sucesso-icon">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2 class="sucesso-title">Pedido confirmado! 🎉</h2>
+          <p class="sucesso-sub">Enviamos os detalhes para {{ email() }}. Número do pedido: <strong>#FIAP-{{ numeroPedido() }}</strong>.</p>
+          <div class="sucesso-ctas">
+            <a routerLink="/produtos" class="fiap-btn-primary">Continuar comprando</a>
+            <button type="button" class="fiap-btn-ghost" (click)="verPedidos()">Ver pedidos</button>
+          </div>
+        </div>
+      }
+    </div>

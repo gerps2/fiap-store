@@ -1,0 +1,35 @@
+
+    <div class="layout">
+      <div class="main mfe-boundary" data-mfe="mfe-checkout">
+        <ui-remote-outlet
+          [loader]="carregarCheckout"
+          displayName="checkout"
+          [retry]="retryCheckout"
+        >
+          <ng-template #skeleton>
+            <div class="sk">
+              <div class="sk__head">
+                <div class="fiap-skeleton" style="width: 140px; height: 14px;"></div>
+                <div class="fiap-skeleton" style="width: 360px; height: 40px; margin-top: 12px;"></div>
+              </div>
+              <div class="sk__grid">
+                <div class="sk__col">
+                  <div class="fiap-skeleton sk__row sk__row--lg"></div>
+                  <div class="fiap-skeleton sk__row"></div>
+                  <div class="fiap-skeleton sk__row"></div>
+                  <div class="fiap-skeleton sk__row"></div>
+                  <div class="fiap-skeleton sk__row"></div>
+                  <div class="fiap-skeleton sk__row sk__row--btn"></div>
+                </div>
+                <aside class="sk__side">
+                  <div class="fiap-skeleton sk__row sk__row--lg"></div>
+                  <div class="fiap-skeleton sk__row"></div>
+                  <div class="fiap-skeleton sk__row"></div>
+                  <div class="fiap-skeleton sk__row sk__row--total"></div>
+                </aside>
+              </div>
+            </div>
+          </ng-template>
+        </ui-remote-outlet>
+      </div>
+    </div>

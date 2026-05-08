@@ -1,0 +1,72 @@
+
+    <section class="hero">
+      <svg class="hero__noise" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+        <filter id="noise">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+          <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.35 0"/>
+        </filter>
+        <rect width="100%" height="100%" filter="url(#noise)"/>
+      </svg>
+
+      <div class="hero__badge" aria-label="Transmissao ao vivo">
+        <span class="hero__badge-dot"></span>
+        AO VIVO
+      </div>
+
+      <div class="hero__inner fiap-container">
+        <span class="fiap-eyebrow hero__eyebrow">FIAP STORE &middot; 2026</span>
+        <h1 class="hero__title">
+          Tecnologia que <span class="accent">acelera</span><br/>
+          o futuro
+        </h1>
+        <p class="hero__sub">
+          Curadoria de gear, livros e cursos para quem constroi software de verdade.
+          Microfrontends compostos em runtime, UX de marketplace premium.
+        </p>
+        <div class="hero__cta">
+          <a routerLink="/produtos" class="fiap-btn-primary">Explorar produtos</a>
+          <a routerLink="/carrinho" class="hero__ghost">Ver carrinho <span aria-hidden="true">&rarr;</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust fiap-container" aria-label="Beneficios">
+      <div class="trust__pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7h13l5 5v5h-3"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        Envio em 24h
+      </div>
+      <div class="trust__pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+        Garantia 30 dias
+      </div>
+      <div class="trust__pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
+        Parcelamento 12x
+      </div>
+      <div class="trust__pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M12 7v5l3 2"/></svg>
+        Suporte 24/7
+      </div>
+    </section>
+
+    <section class="section fiap-container">
+      <header class="section__head">
+        <div>
+          <span class="fiap-eyebrow">Catalogo</span>
+          <h2 class="section__title">Tudo que voce precisa</h2>
+        </div>
+        <a routerLink="/checkout" class="section__link">Ir para checkout &rarr;</a>
+      </header>
+      <div class="mfe-boundary" data-mfe="mfe-produtos">
+        <ng-container #slotProdutos />
+      </div>
+    </section>
+
+    <section class="cta-final">
+      <div class="cta-final__inner fiap-container">
+        <span class="fiap-eyebrow cta-final__eyebrow">Comece agora</span>
+        <h2 class="cta-final__title">Pronto para <span class="accent">construir</span>?</h2>
+        <p class="cta-final__sub">Monte seu kit de ferramentas e acelere seu proximo projeto.</p>
+        <a routerLink="/produtos" class="fiap-btn-primary">Explorar produtos</a>
+      </div>
+    </section>

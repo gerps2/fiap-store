@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: mfe-produtos
+  namespace: fiap-store
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mfe-produtos
+  template:
+    metadata:
+      labels:
+        app: mfe-produtos
+    spec:
+      containers:
+        - name: mfe-produtos
+          image: ghcr.io/gerps2/fiap-store-mfe-produtos:latest
+          ports:
+            - containerPort: 80
+  strategy:
+    blueGreen:
+      activeService: mfe-produtos-active
+      previewService: mfe-produtos-preview
+      autoPromotionEnabled: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mfe-produtos-active
+  namespace: fiap-store
+spec:
+  selector:
+    app: mfe-produtos
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mfe-produtos-preview
+  namespace: fiap-store
+spec:
+  selector:
+    app: mfe-produtos
+  ports:
+    - port: 80
+      targetPort: 80

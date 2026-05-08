@@ -1,0 +1,236 @@
+/*
+ * @fiap/shared — FIAP Store design tokens
+ * Identidade: edtech marketplace premium. Preto-absoluto no shell, vermelho FIAP
+ * como acento dominante (CTAs, preços, badges, halos de hover). Poppins (display)
+ * + Inter (body). Sombras com tint vermelho em hovers de cards.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* === Brand — FIAP === */
+  --fiap-red:                 #ED1C24;
+  --fiap-red-hover:           #C9141B;
+  --fiap-red-active:          #A81016;
+  --fiap-red-soft:            #FEE7E8;
+  --fiap-red-glow:            rgba(237, 28, 36, 0.28);
+
+  /* === Neutros === */
+  --fiap-dark:                #1A1A1A;
+  --fiap-dark-2:              #262626;
+  --fiap-dark-3:              #333333;
+  --fiap-surface:             #F5F5F5;
+  --fiap-white:               #FFFFFF;
+  --fiap-ink:                 #0A0A0A;
+
+  /* === Aliases semânticos === */
+  --fiap-color-brand:         var(--fiap-red);
+  --fiap-color-brand-hover:   var(--fiap-red-hover);
+  --fiap-color-brand-subtle:  var(--fiap-red-soft);
+  --fiap-color-brand-on:      var(--fiap-white);
+
+  --fiap-color-surface:       var(--fiap-white);
+  --fiap-color-surface-alt:   var(--fiap-surface);
+  --fiap-color-surface-raised:var(--fiap-white);
+  --fiap-color-surface-sunken:#EDEDED;
+
+  --fiap-color-text:          var(--fiap-dark);
+  --fiap-color-text-subtle:   #525252;
+  --fiap-color-text-muted:    #737373;
+  --fiap-color-text-on-brand: var(--fiap-white);
+  --fiap-color-text-on-dark:  var(--fiap-white);
+
+  --fiap-color-border:        #E5E5E5;
+  --fiap-color-border-strong: #D4D4D4;
+  --fiap-color-border-subtle: #EFEFEF;
+
+  --fiap-color-success:       #15803D;
+  --fiap-color-success-subtle:#DCFCE7;
+  --fiap-color-warning:       #B45309;
+  --fiap-color-warning-subtle:#FEF3C7;
+  --fiap-color-danger:        var(--fiap-red);
+  --fiap-color-danger-subtle: var(--fiap-red-soft);
+  --fiap-color-info:          #0369A1;
+  --fiap-color-info-subtle:   #E0F2FE;
+
+  /* === Tipografia === */
+  --font-heading:             "Poppins", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body:                "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono:                "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* aliases legados para componentes existentes */
+  --fiap-font-family:         var(--font-body);
+  --fiap-font-family-display: var(--font-heading);
+  --fiap-font-family-mono:    var(--font-mono);
+
+  --text-xs:                  12px;
+  --text-sm:                  14px;
+  --text-base:                16px;
+  --text-md:                  16px;
+  --text-lg:                  18px;
+  --text-xl:                  20px;
+  --text-2xl:                 24px;
+  --text-3xl:                 32px;
+  --text-4xl:                 44px;
+  --text-5xl:                 72px;
+
+  /* aliases legados */
+  --fiap-font-size-xs:        var(--text-xs);
+  --fiap-font-size-sm:        var(--text-sm);
+  --fiap-font-size-md:        var(--text-base);
+  --fiap-font-size-lg:        var(--text-lg);
+  --fiap-font-size-xl:        var(--text-xl);
+  --fiap-font-size-2xl:       var(--text-2xl);
+  --fiap-font-size-3xl:       var(--text-3xl);
+  --fiap-font-size-4xl:       var(--text-4xl);
+  --fiap-font-size-5xl:       var(--text-5xl);
+
+  --leading-tight:            1.1;
+  --leading-snug:             1.25;
+  --leading-normal:           1.5;
+  --leading-loose:            1.7;
+  --fiap-line-height-tight:   var(--leading-tight);
+  --fiap-line-height-normal:  var(--leading-normal);
+  --fiap-line-height-loose:   var(--leading-loose);
+
+  --weight-regular:           400;
+  --weight-medium:            500;
+  --weight-semibold:          600;
+  --weight-bold:              700;
+  --weight-black:             900;
+  --fiap-font-weight-regular: 400;
+  --fiap-font-weight-medium:  500;
+  --fiap-font-weight-semibold:600;
+  --fiap-font-weight-bold:    700;
+
+  --tracking-tight:          -0.02em;
+  --tracking-snug:           -0.01em;
+  --tracking-normal:          0;
+  --tracking-wide:            0.08em;
+  --tracking-wider:           0.16em;
+
+  /* === Espaçamento (escala 4px) === */
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-7:   28px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-20:  80px;
+  --space-24:  96px;
+  --space-32:  128px;
+
+  --fiap-space-0:   var(--space-0);
+  --fiap-space-1:   var(--space-1);
+  --fiap-space-2:   var(--space-2);
+  --fiap-space-3:   var(--space-3);
+  --fiap-space-4:   var(--space-4);
+  --fiap-space-5:   var(--space-6);
+  --fiap-space-6:   var(--space-8);
+  --fiap-space-7:   var(--space-12);
+  --fiap-space-8:   var(--space-16);
+
+  /* === Radii === */
+  --radius-xs:   4px;
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   24px;
+  --radius-2xl:  32px;
+  --radius-pill: 999px;
+
+  --fiap-radius-sm:   var(--radius-sm);
+  --fiap-radius-md:   var(--radius-md);
+  --fiap-radius-lg:   var(--radius-lg);
+  --fiap-radius-xl:   var(--radius-xl);
+  --fiap-radius-full: var(--radius-pill);
+
+  /* === Sombras com tint vermelho === */
+  --shadow-xs:          0 1px 2px rgba(10, 10, 10, 0.04);
+  --shadow-sm:          0 2px 4px rgba(10, 10, 10, 0.06);
+  --shadow-md:          0 6px 16px rgba(10, 10, 10, 0.08), 0 2px 4px rgba(10, 10, 10, 0.04);
+  --shadow-lg:          0 16px 32px rgba(10, 10, 10, 0.10), 0 4px 8px rgba(10, 10, 10, 0.05);
+  --shadow-xl:          0 32px 64px rgba(10, 10, 10, 0.14), 0 8px 16px rgba(10, 10, 10, 0.06);
+  --shadow-card:        0 1px 3px rgba(10, 10, 10, 0.06), 0 4px 12px rgba(10, 10, 10, 0.04);
+  --shadow-card-hover:  0 24px 48px -12px rgba(237, 28, 36, 0.28), 0 8px 16px -8px rgba(10, 10, 10, 0.12);
+  --shadow-inset:       inset 0 1px 2px rgba(10, 10, 10, 0.06);
+  --shadow-focus-ring:  0 0 0 4px rgba(237, 28, 36, 0.24);
+  --shadow-dark-nav:    0 10px 30px -8px rgba(0, 0, 0, 0.45);
+
+  --fiap-shadow-sm: var(--shadow-sm);
+  --fiap-shadow-md: var(--shadow-md);
+  --fiap-shadow-lg: var(--shadow-lg);
+
+  /* === Motion === */
+  --duration-fast:       120ms;
+  --duration-normal:     220ms;
+  --duration-slow:       360ms;
+  --duration-drawer:     440ms;
+  --ease-out:            cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out:         cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring:         cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-base:     all var(--duration-normal) var(--ease-out);
+  --transition-spring:   all var(--duration-slow) var(--ease-spring);
+
+  --fiap-duration-fast:   var(--duration-fast);
+  --fiap-duration-normal: var(--duration-normal);
+  --fiap-duration-slow:   var(--duration-slow);
+  --fiap-easing:          var(--ease-out);
+
+  /* === Layout === */
+  --container-max:       1280px;
+  --container-gutter:    clamp(16px, 4vw, 48px);
+  --navbar-height:       72px;
+  --fiap-container-max:  var(--container-max);
+  --fiap-topbar-height:  var(--navbar-height);
+
+  /* === z-index === */
+  --z-nav:       50;
+  --z-drawer:    80;
+  --z-backdrop:  70;
+  --z-toast:     100;
+  --z-modal:     90;
+}
+
+/* === Base typography & reset aplicado via atributo do host === */
+html[data-fiap-base] {
+  font-family: var(--font-body);
+  color: var(--fiap-color-text);
+  background: var(--fiap-color-surface-alt);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html[data-fiap-base] body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--fiap-color-text);
+  background: var(--fiap-color-surface-alt);
+}
+
+html[data-fiap-base] h1,
+html[data-fiap-base] h2,
+html[data-fiap-base] h3,
+html[data-fiap-base] h4,
+html[data-fiap-base] h5,
+html[data-fiap-base] h6 {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+html[data-fiap-base] *::selection {
+  background: var(--fiap-red);
+  color: var(--fiap-white);
+}
