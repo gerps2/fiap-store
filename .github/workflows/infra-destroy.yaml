@@ -48,4 +48,4 @@ jobs:
         env:
           TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
           TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
-        run: terraform destroy -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+        run: terraform destroy -auto-approve -lock=false -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
