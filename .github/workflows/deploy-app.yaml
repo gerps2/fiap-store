@@ -115,6 +115,12 @@ jobs:
             backend=${{ env.IMAGE_PREFIX }}-backend:$VERSION \
             -n fiap-store
 
+      - name: Install Argo Rollouts kubectl plugin
+        run: |
+          curl -sLO https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+          chmod +x kubectl-argo-rollouts-linux-amd64
+          sudo mv kubectl-argo-rollouts-linux-amd64 /usr/local/bin/kubectl-argo-rollouts
+
       - name: Update MFE rollouts
         run: |
           VERSION=${{ needs.build-and-push.outputs.version }}
