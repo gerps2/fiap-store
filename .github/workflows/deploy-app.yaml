@@ -137,7 +137,7 @@ jobs:
           done
 
       - name: Wait for backend rollout
-        run: kubectl rollout status deployment/backend -n fiap-store --timeout=120s
+        run: kubectl rollout status deployment/backend -n fiap-store --timeout=600s
 
       - name: Show rollout status
         run: kubectl argo rollouts list rollouts -n fiap-store
