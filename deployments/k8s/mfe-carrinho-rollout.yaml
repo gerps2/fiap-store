@@ -18,6 +18,13 @@ spec:
           image: ghcr.io/gerps2/fiap-store-mfe-carrinho:latest
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
   strategy:
     canary:
       steps:
