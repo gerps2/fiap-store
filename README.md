@@ -1,120 +1,189 @@
 # fiap-store
 
-Monorepo de referência das aulas da disciplina *Arquitetura Angular para Aplicações de Alta Escala* (FIAP PosTech). Cada aula vive em uma **branch**; este `README` é o mapa do repo e do estado da branch `main`.
+Monorepo de referência das aulas da disciplina *Arquitetura Angular para Aplicações de Alta Escala* (FIAP PosTech 8FRNT Fase 2). Cada aula vive em uma **branch**; este `README` cobre o estado da branch `aula-05` — a versão completa com Docker, Kubernetes e pipeline de deploy.
 
-## Arquitetura
-
-O repo está dividido em dois mundos explícitos — frontend e backend na mesma árvore, cada um com seu próprio `package.json`:
+## Estrutura do repositório
 
 ```
 fiap-store/
-├── README.md                         ← este arquivo
-├── scripts/
-│   └── use-manifest.mjs              ← gera federation.manifest.json conforme o modo (local/dev/solo)
-└── src/
-    ├── frontend/                     ← Angular 21 workspace (host + MFEs + libs compartilhadas)
-    │   ├── angular.json
-    │   ├── package.json              ← deps e scripts do frontend
-    │   ├── tsconfig.json
-    │   └── projects/
-    │       ├── host/                 ← host (4200) — dynamic-host + Apollo shared
-    │       ├── mfe-produtos/         ← remote (4201)
-    │       ├── mfe-carrinho/         ← remote (4202)
-    │       ├── mfe-checkout/         ← remote (4203)
-    │       ├── mfe-notificacoes/     ← remote (4204) — hub global de notificações (a partir da Aula 3)
-    │       ├── shared-ui/            ← lib (UiButton + tokens CSS + *hasGroup + <ui-toast>)
-    │       └── shared-context/       ← lib (UserContextService — Aula 3)
-    └── backend/                      ← NestJS 10 monolito modular (a partir da Aula 3)
-        ├── package.json              ← deps e scripts do backend
-        ├── db.sqlite                 ← criado no boot (gitignored)
-        └── src/
-            ├── auth/                 ← REST (signup, login, refresh, logout, csrf)
-            ├── users/                ← REST (/users/me)
-            ├── products/             ← GraphQL
-            ├── cart/                 ← GraphQL
-            ├── orders/               ← GraphQL
-            ├── notifications/        ← GraphQL + subscription (graphql-ws)
-            └── common/               ← filters, guards, middleware globais
+├── src/
+│   ├── frontend/                     ← Angular 21 workspace
+│   │   └── projects/
+│   │       ├── host/                 ← Shell app (porta 4200)
+│   │       ├── mfe-produtos/         ← MFE Produtos (porta 4201)
+│   │       ├── mfe-carrinho/         ← MFE Carrinho (porta 4202)
+│   │       ├── mfe-checkout/         ← MFE Checkout (porta 4203)
+│   │       ├── mfe-notificacoes/     ← MFE Notificações (porta 4204)
+│   │       ├── shared-ui/            ← Lib de componentes
+│   │       └── shared-context/       ← Lib de contexto do usuário
+│   └── backend/                      ← NestJS 10 (porta 3000)
+│       └── .keys/                    ← Chaves ES256 para JWT (geradas em dev)
+├── deployments/
+│   ├── docker/                       ← Dockerfiles por serviço
+│   │   ├── shell/
+│   │   ├── mfe-produtos/
+│   │   ├── mfe-carrinho/
+│   │   ├── mfe-checkout/
+│   │   ├── mfe-notificacoes/
+│   │   └── backend/
+│   ├── k8s/                          ← Manifests Kubernetes + Argo Rollouts
+│   │   ├── namespace.yaml
+│   │   ├── backend-deployment.yaml
+│   │   ├── backend-keys-secret.yaml  ← Secret com chaves JWT do backend
+│   │   ├── shell-rollout.yaml        ← Canary
+│   │   ├── mfe-produtos-rollout.yaml ← Blue/Green
+│   │   ├── mfe-carrinho-rollout.yaml ← Canary
+│   │   ├── mfe-checkout-rollout.yaml ← Blue/Green
+│   │   ├── mfe-notificacoes-rollout.yaml ← Canary
+│   │   └── ingress.yaml
+│   └── infra/                        ← Terraform (GCP + Cloudflare)
+│       ├── main.tf
+│       ├── cloudflare.tf
+│       ├── variables.tf
+│       └── outputs.tf
+├── .github/
+│   └── workflows/
+│       ├── CI.yaml                   ← Lint + test + build + docker validation
+│       ├── deploy-infra.yaml         ← Terraform apply (manual)
+│       ├── deploy-app.yaml           ← Build + push + deploy (tag v*.*.*)
+│       └── infra-destroy.yaml        ← Terraform destroy (manual)
+└── scripts/
+    └── use-manifest.mjs              ← Gera federation.manifest.json por modo
 ```
-
-### Por que `src/frontend` e `src/backend` separados
-
-- **Clareza didática:** o aluno abre a raiz e vê onde fica cada código.
-- **Dependências isoladas:** cada lado tem seu `package.json`, seus scripts, seu `node_modules`.
-- **Coexistência REST + GraphQL no mesmo backend** é um ponto pedagógico da Aula 3 — ter um diretório único pra isso reforça o conceito.
 
 ## Branches por aula
 
 | Branch | Tema | Estado |
 |---|---|---|
-| `main` | Base + docs | estável |
-| `aula-02` | Module Federation: Isolamento, Compartilhamento e Versionamento | ✅ concluída |
-| `aula-03` | Comunicação, GraphQL e Segurança | 🚧 em produção |
+| `aula-02` | Module Federation | ✅ concluída |
+| `aula-03` | Comunicação, GraphQL e Segurança | ✅ concluída |
+| `aula-04` | CI e Governança Técnica | ✅ concluída |
+| `aula-05` | Deploy Enterprise | ✅ concluída |
 
-Cada aula parte da branch anterior. Tags marcam checkpoints relevantes dentro da branch.
+## Desenvolvimento local
 
----
-
-## Apps após a branch atual
-
-| App | Porta | Tipo | O que faz |
-|---|---|---|---|
-| `host` | 4200 | `dynamic-host` | Topbar + rotas + composição da home. A partir da Aula 3: Apollo Client compartilhado + UserContextService |
-| `mfe-produtos` | 4201 | `remote` | Catálogo (GraphQL `products`) |
-| `mfe-carrinho` | 4202 | `remote` | Carrinho (GraphQL `myCart` + mutations) |
-| `mfe-checkout` | 4203 | `remote` | Checkout (GraphQL `mutation checkout`) |
-| `mfe-notificacoes` | 4204 | `remote` | Hub de notificações (subscription `notificationAdded` + toast) |
-| `shared-ui` (lib) | — | library | `UiButtonComponent` + `tokens.css` + `*hasGroup` + `<ui-toast>` |
-| `shared-context` (lib) | — | library | `UserContextService` (signal do usuário logado) |
-
-## Pré-requisitos
-
-- Node.js 24 LTS (`node -v`)
-- npm 10+ (`npm -v`)
-- Angular CLI 21+ (`npm i -g @angular/cli@latest`)
-- **Zero Docker** — banco é SQLite (arquivo local).
-- (Modo `solo` do frontend) URL pública dos remotes em deploy preview com CORS liberado.
-
-## Como rodar
-
-### Backend (API)
+### Backend
 
 ```bash
 cd src/backend
 npm install
-npm run gen:keys          # gera par ES256 no .env (1ª vez)
-npm run start:dev         # cria db.sqlite + roda migrations + seed + sobe em :3000
+npm run gen:keys          # gera par ES256 em .keys/ (apenas 1ª vez)
+npm run start:dev         # cria db.sqlite + migrations + seed + inicia em :3000
 ```
 
-Logins pré-seed (criados pela migration `SeedUsers`):
-- **admin**: `admin@fiap.com` / `admin123`
-- **cliente**: `cliente@fiap.com` / `cliente123`
+Logins pré-seed: `admin@fiap.com / admin123` · `cliente@fiap.com / cliente123`
 
-Endpoints principais:
-- REST — `POST /auth/signup | /auth/login | /auth/refresh | /auth/logout`, `GET /auth/csrf`, `GET /users/me`, `GET /health`
-- GraphQL playground — http://localhost:3000/graphql
-
-### Frontend (MFEs)
+### Frontend
 
 ```bash
 cd src/frontend
 npm install
-npm run start:local       # sobe host + 4 remotes em localhost (5 terminais via concurrently)
-# ou
-npm start                 # host local, remotes vêm do deploy preview
-# ou
-npm run start:solo -- --mfe=mfe-notificacoes   # só edito um remote; resto do preview
+npm run start:local       # host + todos os MFEs em localhost (concurrently)
 ```
 
-O script `scripts/use-manifest.mjs` (raiz do repo) gera `src/frontend/projects/host/public/federation.manifest.json` conforme o modo (`local` / `dev` / `solo`) antes do `ng serve`.
+## GitFlow
 
----
+```
+feature/* ─── PR ──▶ develop ─── PR ──▶ main ─── git tag v*.*.* ──▶ deploy
+                       ▲                  ▲
+                    CI.yaml            CI.yaml
+```
 
-## Histórico de aulas anteriores
+| Evento | Workflow |
+|---|---|
+| PR aberto para `develop` ou `main` | `CI.yaml` — lint → test → build → docker build |
+| `workflow_dispatch` com confirmação `apply` | `deploy-infra.yaml` — terraform apply |
+| Push de tag `v*.*.*` | `deploy-app.yaml` — build + push GHCR + deploy GKE |
+| `workflow_dispatch` com confirmação `destroy` | `infra-destroy.yaml` — terraform destroy |
 
-- **Aula 2 (branch `aula-02`)** — adicionou `mfe-notificacoes`, lib `shared-ui`, manifests por ambiente e modo `solo`.
-- **Aula 3 (branch `aula-03`, esta)** — adiciona backend NestJS (REST + GraphQL), JWT seguro com cookies httpOnly, RBAC em camadas, erro centralizado e hub de notificações via subscription.
+## Deploy passo a passo
 
-## Próxima aula
+### 1. Provisionar infraestrutura (uma vez)
 
-A **Aula 4** — *CI e Governança Técnica* — parte desta e foca em pipelines, affected builds e quality gates.
+```
+GitHub → Actions → Infra — Terraform Apply → Run workflow
+Digite "apply" e confirme
+```
+
+Cria: VPC, GKE Autopilot cluster (`us-central1`), Cloudflare DNS + cache rules.
+
+Instala automaticamente: NGINX Ingress Controller + Argo Rollouts no cluster.
+
+### 2. Criar feature e abrir PR
+
+```bash
+git checkout develop
+git checkout -b feature/minha-feature
+# ... desenvolve ...
+git push origin feature/minha-feature
+# Abre PR → develop — CI.yaml roda automaticamente
+```
+
+### 3. Deploy em produção
+
+```bash
+git checkout main
+git merge develop
+git tag v1.0.0
+git push origin main --tags
+# deploy-app.yaml dispara automaticamente
+```
+
+O pipeline faz:
+1. Build das 6 imagens Docker (`shell`, `mfe-*` × 4, `backend`)
+2. Push para GHCR: `ghcr.io/gerps2/fiap-store-{serviço}:{versão}`
+3. `kubectl apply` dos manifests Kubernetes
+4. `kubectl argo rollouts set image` para os 5 MFEs
+5. `kubectl set image deployment/backend` para o backend
+
+### 4. Acompanhar e promover o rollout
+
+```bash
+# Instalar plugin localmente
+brew install argoproj/tap/kubectl-argo-rollouts
+
+# Ver status de todos os rollouts
+kubectl argo rollouts list rollouts -n fiap-store
+
+# Promover canary para próxima etapa (10%→30%→60%→100%)
+kubectl argo rollouts promote shell -n fiap-store
+
+# Abortar e reverter para versão anterior
+kubectl argo rollouts abort shell -n fiap-store
+```
+
+### 5. Destruir infraestrutura (após uso)
+
+```
+GitHub → Actions → Infra — Terraform Destroy → Run workflow
+Digite "destroy" e confirme
+```
+
+## Imagens Docker
+
+| Serviço | Imagem GHCR |
+|---|---|
+| Shell (host app) | `ghcr.io/gerps2/fiap-store-shell:{versão}` |
+| MFE Produtos | `ghcr.io/gerps2/fiap-store-mfe-produtos:{versão}` |
+| MFE Carrinho | `ghcr.io/gerps2/fiap-store-mfe-carrinho:{versão}` |
+| MFE Checkout | `ghcr.io/gerps2/fiap-store-mfe-checkout:{versão}` |
+| MFE Notificações | `ghcr.io/gerps2/fiap-store-mfe-notificacoes:{versão}` |
+| Backend NestJS | `ghcr.io/gerps2/fiap-store-backend:{versão}` |
+
+## Estratégias de deploy por serviço
+
+| Serviço | Estratégia | Motivo |
+|---|---|---|
+| `shell` | Canary (10%→30%→60%) | Exposição gradual para detectar regressões |
+| `mfe-carrinho` | Canary | Fluxo de UX — validação com tráfego real |
+| `mfe-notificacoes` | Canary | Feature incremental de baixo risco |
+| `mfe-produtos` | Blue/Green | Catálogo — mudanças críticas validadas antes da promoção |
+| `mfe-checkout` | Blue/Green | Fluxo transacional — zero risco antes da promoção |
+| `backend` | Rolling Update | API REST/GraphQL — atualização padrão Kubernetes |
+
+## Pré-requisitos para deploy
+
+- Conta GCP com Free Trial ou créditos ativos
+- Zona Cloudflare configurada para o domínio
+- Secrets no GitHub: `GCP_PROJECT_ID`, `TF_VAR_CLOUDFLARE_ZONE_ID`, `TF_VAR_CLOUDFLARE_API_TOKEN`
+- Workload Identity Federation configurado (sem JSON key)
