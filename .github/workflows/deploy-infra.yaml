@@ -15,6 +15,9 @@ jobs:
     name: Terraform Apply
     runs-on: ubuntu-latest
     if: github.event.inputs.confirm == 'apply'
+    permissions:
+      id-token: write
+      contents: read
     defaults:
       run:
         working-directory: deployments/infra
@@ -23,7 +26,8 @@ jobs:
 
       - uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: 'projects/420326696636/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-actions-deploy@project-94ea6a01-7eb7-4014-b16.iam.gserviceaccount.com'
 
       - uses: google-github-actions/setup-gcloud@v2
 
@@ -35,9 +39,15 @@ jobs:
         run: terraform init
 
       - name: Terraform Plan
+        env:
+          TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
         run: terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -out=tfplan
 
       - name: Terraform Apply
+        env:
+          TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
         run: terraform apply -auto-approve tfplan
 
       - name: Configure kubectl

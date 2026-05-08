@@ -33,22 +33,18 @@ resource "cloudflare_record" "root" {
   proxied = true
 }
 
-resource "cloudflare_record" "www" {
-  zone_id = var.cloudflare_zone_id
-  name    = "www"
-  type    = "CNAME"
-  content = var.domain
-  proxied = true
-}
-
 resource "cloudflare_zone_settings_override" "main" {
   zone_id = var.cloudflare_zone_id
 
   settings {
-    ssl            = "flexible"
+    ssl              = "flexible"
     always_use_https = "on"
     min_tls_version  = "1.2"
     http3            = "on"
+  }
+
+  lifecycle {
+    ignore_changes = all
   }
 }
 
@@ -63,21 +59,13 @@ resource "cloudflare_ruleset" "cache_rules" {
     expression  = "(http.request.uri.path eq \"/index.html\")"
     action      = "set_cache_settings"
     action_parameters {
-      cache = true
-      edge_ttl {
-        mode    = "override_origin"
-        default = 0
-      }
-      browser_ttl {
-        mode    = "override_origin"
-        default = 0
-      }
+      cache = false
     }
   }
 
   rules {
-    description = "Cache imutável para assets com hash"
-    expression  = "(http.request.uri.path matches \".*\\.[a-f0-9]{8,}\\.(js|css)$\")"
+    description = "Cache imutável para assets JS e CSS"
+    expression  = "(ends_with(http.request.uri.path, \".js\") or ends_with(http.request.uri.path, \".css\"))"
     action      = "set_cache_settings"
     action_parameters {
       cache = true

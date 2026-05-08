@@ -86,12 +86,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-and-push
     environment: production
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
       - uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          workload_identity_provider: 'projects/420326696636/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-actions-deploy@project-94ea6a01-7eb7-4014-b16.iam.gserviceaccount.com'
 
       - uses: google-github-actions/setup-gcloud@v2
 
