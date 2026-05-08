@@ -29,12 +29,6 @@ jobs:
           workload_identity_provider: 'projects/420326696636/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
           service_account: 'github-actions-deploy@project-94ea6a01-7eb7-4014-b16.iam.gserviceaccount.com'
 
-      - uses: google-github-actions/get-gke-credentials@v2
-        with:
-          cluster_name: fiap-store
-          location: us-central1
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: '1.7.0'
@@ -54,6 +48,12 @@ jobs:
           TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
         run: terraform apply -auto-approve tfplan
 
+      - uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: fiap-store
+          location: us-central1
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
       - name: Install NGINX Ingress Controller
         run: |
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
@@ -63,5 +63,6 @@ jobs:
           kubectl create namespace argo-rollouts --dry-run=client -o yaml | kubectl apply -f -
           kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 
-      - name: Apply Kubernetes namespaces
+      - name: Apply Kubernetes namespace
+        working-directory: .
         run: kubectl apply -f deployments/k8s/namespace.yaml

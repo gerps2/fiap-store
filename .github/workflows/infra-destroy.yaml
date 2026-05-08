@@ -34,6 +34,7 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Delete Kubernetes resources
+        working-directory: .
         run: |
           kubectl delete -f deployments/k8s/ --ignore-not-found=true || true
 
