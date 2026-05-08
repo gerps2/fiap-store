@@ -51,7 +51,7 @@ infra: ## Provisiona VPC + GKE Autopilot no GCP
 	@echo "→ Provisionando infraestrutura em $(PROJECT_ID)..."
 	cd $(TF_DIR) && \
 	  terraform init && \
-	  terraform apply -var="project_id=$(PROJECT_ID)" -var="region=$(REGION)"
+	  terraform apply -auto-approve -var="project_id=$(PROJECT_ID)" -var="region=$(REGION)"
 	@$(MAKE) kubeconfig
 	@$(MAKE) k8s-setup
 	@echo "✓ Infraestrutura pronta"
@@ -61,7 +61,7 @@ infra-destroy: ## Destroi toda a infraestrutura GCP
 	kubectl delete -f $(K8S_DIR)/ --ignore-not-found=true 2>/dev/null || true
 	cd $(TF_DIR) && \
 	  terraform init && \
-	  terraform destroy -var="project_id=$(PROJECT_ID)" -var="region=$(REGION)"
+	  terraform destroy -auto-approve -var="project_id=$(PROJECT_ID)" -var="region=$(REGION)"
 	@echo "✓ Infraestrutura destruída"
 
 # ─────────────────────────────────────────────────────────
@@ -84,7 +84,7 @@ k8s-setup: kubeconfig ## Instala NGINX Ingress + Argo Rollouts no cluster
 	kubectl wait --namespace ingress-nginx \
 	  --for=condition=ready pod \
 	  --selector=app.kubernetes.io/component=controller \
-	  --timeout=120s
+	  --timeout=300s
 
 k8s-apply: kubeconfig ## Aplica todos os manifestos K8s
 	kubectl apply -f $(K8S_DIR)/

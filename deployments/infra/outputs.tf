@@ -10,3 +10,8 @@ output "cluster_endpoint" {
 output "kubeconfig_command" {
   value = "gcloud container clusters get-credentials ${google_container_cluster.main.name} --region ${var.region} --project ${var.project_id}"
 }
+
+output "ingress_ip" {
+  value       = local.ingress_ip
+  description = "IP do Load Balancer — apontado automaticamente no Cloudflare DNS"
+}
