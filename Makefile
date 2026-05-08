@@ -1,3 +1,6 @@
+-include .env
+export
+
 PROJECT_ID   ?= $(shell gcloud config get-value project 2>/dev/null)
 REGION       ?= us-central1
 CLUSTER      := fiap-store
