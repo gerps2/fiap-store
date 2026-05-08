@@ -18,6 +18,10 @@ spec:
           image: ghcr.io/gerps2/fiap-store-backend:latest
           ports:
             - containerPort: 3000
+          volumeMounts:
+            - name: jwt-keys
+              mountPath: /app/.keys
+              readOnly: true
           livenessProbe:
             httpGet:
               path: /health
@@ -30,6 +34,10 @@ spec:
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
+      volumes:
+        - name: jwt-keys
+          secret:
+            secretName: backend-keys
 ---
 apiVersion: v1
 kind: Service
