@@ -55,16 +55,13 @@ jobs:
       - name: Build and push frontend images
         run: |
           SERVICES=(shell mfe-produtos mfe-carrinho mfe-checkout mfe-notificacoes)
-          DIRS=(host mfe-produtos mfe-carrinho mfe-checkout mfe-notificacoes)
           VERSION=${{ steps.version.outputs.value }}
 
-          for i in "${!SERVICES[@]}"; do
-            SERVICE=${SERVICES[$i]}
-            DIR=${DIRS[$i]}
+          for SERVICE in "${SERVICES[@]}"; do
             echo "Building $SERVICE..."
             docker build \
-              -f src/frontend/projects/$DIR/Dockerfile \
-              src/frontend \
+              -f deployments/docker/$SERVICE/Dockerfile \
+              . \
               --tag ${{ env.IMAGE_PREFIX }}-$SERVICE:$VERSION \
               --tag ${{ env.IMAGE_PREFIX }}-$SERVICE:latest
             docker push ${{ env.IMAGE_PREFIX }}-$SERVICE:$VERSION
@@ -75,7 +72,8 @@ jobs:
         run: |
           VERSION=${{ steps.version.outputs.value }}
           docker build \
-            src/backend \
+            -f deployments/docker/backend/Dockerfile \
+            . \
             --tag ${{ env.IMAGE_PREFIX }}-backend:$VERSION \
             --tag ${{ env.IMAGE_PREFIX }}-backend:latest
           docker push ${{ env.IMAGE_PREFIX }}-backend:$VERSION
@@ -102,7 +100,7 @@ jobs:
             --project ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Apply Kubernetes manifests
-        run: kubectl apply -f infra/k8s/
+        run: kubectl apply -f deployments/k8s/
 
       - name: Update backend image
         run: |

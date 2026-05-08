@@ -14,7 +14,7 @@ jobs:
     if: github.event.inputs.confirm == 'apply'
     defaults:
       run:
-        working-directory: infra
+        working-directory: deployments/infra
     steps:
       - uses: actions/checkout@v4
 
@@ -53,4 +53,4 @@ jobs:
           kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 
       - name: Apply Kubernetes namespaces
-        run: kubectl apply -f k8s/namespace.yaml
+        run: kubectl apply -f deployments/k8s/namespace.yaml

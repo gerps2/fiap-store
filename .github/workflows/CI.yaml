@@ -65,17 +65,17 @@ jobs:
     strategy:
       matrix:
         service:
-          - { name: shell,            context: src/frontend, dockerfile: projects/host/Dockerfile }
-          - { name: mfe-produtos,     context: src/frontend, dockerfile: projects/mfe-produtos/Dockerfile }
-          - { name: mfe-carrinho,     context: src/frontend, dockerfile: projects/mfe-carrinho/Dockerfile }
-          - { name: mfe-checkout,     context: src/frontend, dockerfile: projects/mfe-checkout/Dockerfile }
-          - { name: mfe-notificacoes, context: src/frontend, dockerfile: projects/mfe-notificacoes/Dockerfile }
-          - { name: backend,          context: src/backend,  dockerfile: Dockerfile }
+          - { name: shell            }
+          - { name: mfe-produtos     }
+          - { name: mfe-carrinho     }
+          - { name: mfe-checkout     }
+          - { name: mfe-notificacoes }
+          - { name: backend          }
     steps:
       - uses: actions/checkout@v4
       - name: Build ${{ matrix.service.name }}
         run: |
           docker build \
-            -f ${{ matrix.service.context }}/${{ matrix.service.dockerfile }} \
-            ${{ matrix.service.context }} \
+            -f deployments/docker/${{ matrix.service.name }}/Dockerfile \
+            . \
             --tag fiap-store-${{ matrix.service.name }}:pr-${{ github.event.pull_request.number }}

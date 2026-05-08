@@ -14,7 +14,7 @@ jobs:
     if: github.event.inputs.confirm == 'destroy'
     defaults:
       run:
-        working-directory: infra
+        working-directory: deployments/infra
     steps:
       - uses: actions/checkout@v4
 
@@ -33,7 +33,7 @@ jobs:
 
       - name: Delete Kubernetes resources
         run: |
-          kubectl delete -f k8s/ --ignore-not-found=true || true
+          kubectl delete -f deployments/k8s/ --ignore-not-found=true || true
 
       - uses: hashicorp/setup-terraform@v3
         with:
