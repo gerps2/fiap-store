@@ -1,0 +1,56 @@
+name: Infra — Terraform Apply
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Digite "apply" para confirmar'
+        required: true
+
+jobs:
+  terraform-apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'apply'
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.7.0'
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+
+      - name: Configure kubectl
+        run: |
+          gcloud container clusters get-credentials fiap-store \
+            --region us-central1 \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Install NGINX Ingress Controller
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
+
+      - name: Install Argo Rollouts
+        run: |
+          kubectl create namespace argo-rollouts --dry-run=client -o yaml | kubectl apply -f -
+          kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
+      - name: Apply Kubernetes namespaces
+        run: kubectl apply -f k8s/namespace.yaml

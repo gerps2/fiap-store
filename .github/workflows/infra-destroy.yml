@@ -1,0 +1,46 @@
+name: Infra — Terraform Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Digite "destroy" para confirmar (IRREVERSÍVEL)'
+        required: true
+
+jobs:
+  terraform-destroy:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'destroy'
+    defaults:
+      run:
+        working-directory: infra
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure kubectl
+        run: |
+          gcloud container clusters get-credentials fiap-store \
+            --region us-central1 \
+            --project ${{ secrets.GCP_PROJECT_ID }} \
+            || echo "Cluster may not exist, skipping kubectl config"
+
+      - name: Delete Kubernetes resources
+        run: |
+          kubectl delete -f k8s/ --ignore-not-found=true || true
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.7.0'
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -var="project_id=${{ secrets.GCP_PROJECT_ID }}"

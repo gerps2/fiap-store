@@ -1,0 +1,54 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fiap-store
+  namespace: fiap-store
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 80
+          - path: /produtos
+            pathType: Prefix
+            backend:
+              service:
+                name: mfe-produtos-active
+                port:
+                  number: 80
+          - path: /carrinho
+            pathType: Prefix
+            backend:
+              service:
+                name: mfe-carrinho
+                port:
+                  number: 80
+          - path: /checkout
+            pathType: Prefix
+            backend:
+              service:
+                name: mfe-checkout-active
+                port:
+                  number: 80
+          - path: /notificacoes
+            pathType: Prefix
+            backend:
+              service:
+                name: mfe-notificacoes
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: shell
+                port:
+                  number: 80
