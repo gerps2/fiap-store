@@ -104,7 +104,9 @@ jobs:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Apply Kubernetes manifests
-        run: kubectl apply -f deployments/k8s/
+        run: |
+          kubectl apply -f deployments/k8s/namespace.yaml
+          kubectl apply -f deployments/k8s/
 
       - name: Update backend image
         run: |
