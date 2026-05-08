@@ -4,7 +4,7 @@ metadata:
   name: mfe-checkout
   namespace: fiap-store
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mfe-checkout
