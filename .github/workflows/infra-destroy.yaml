@@ -26,14 +26,12 @@ jobs:
           workload_identity_provider: 'projects/420326696636/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
           service_account: 'github-actions-deploy@project-94ea6a01-7eb7-4014-b16.iam.gserviceaccount.com'
 
-      - uses: google-github-actions/setup-gcloud@v2
-
-      - name: Configure kubectl
-        run: |
-          gcloud container clusters get-credentials fiap-store \
-            --region us-central1 \
-            --project ${{ secrets.GCP_PROJECT_ID }} \
-            || echo "Cluster may not exist, skipping kubectl config"
+      - uses: google-github-actions/get-gke-credentials@v2
+        continue-on-error: true
+        with:
+          cluster_name: fiap-store
+          location: us-central1
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       - name: Delete Kubernetes resources
         run: |
