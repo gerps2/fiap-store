@@ -1,4 +1,4 @@
-// Aula 04 - Hands on
+// Aula 03 - Hands on
 // Gateway de WebSocket das notificacoes. Autentica no handshake lendo o
 // cookie access_token, coloca cada socket numa sala por usuario
 // (user:<id>) e expoe emitToUser para mandar evento so para aquele usuario.
