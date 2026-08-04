@@ -1,0 +1,16 @@
+{
+  "_comentario": [
+    "Aula 04 - Hands on",
+    "Config do lint-staged: roda eslint --fix e prettier --write apenas nos",
+    "arquivos .ts e .html que estao em stage. Trecho como veio na aula: e um",
+    "recorte do package.json, nao o arquivo inteiro.",
+    "Fonte: Elaborado pelo autor (2026)"
+  ],
+
+  "lint-staged": {
+    "src/**/*.{ts,html}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}
