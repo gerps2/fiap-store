@@ -1,0 +1,35 @@
+# Aula 04 - Hands on
+# Workflow de CI: o padrao repetido nos jobs lint, test e build, mais o job
+# sonar, que baixa o artifact de coverage e roda o scanner do SonarQube.
+#
+# Trecho como veio na aula: os jobs test e build aparecem so como comentario,
+# e o cabecalho do workflow (name, on:) nao fazia parte do material.
+
+# Padrão repetido em lint, test e build:
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: src/frontend }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+  # test: needs lint, roda test:ci e faz upload-artifact do coverage
+  # build: needs test, roda build:all
+  sonar:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { name: coverage-report, path: src/frontend/coverage }
+      - uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
