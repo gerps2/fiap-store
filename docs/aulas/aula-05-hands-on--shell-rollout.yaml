@@ -1,0 +1,39 @@
+# Aula 05 - Hands on
+# Rollout do Argo para o shell, com estrategia canary em quatro passos:
+# 10% -> pausa manual -> 30% -> pausa de 60s -> 100%. Readiness e liveness
+# batem em /healthz na 8080.
+#
+# Observacao: no material esse trecho aparece rotulado como
+# "CI.yaml, Pipeline de validacao no Pull Request", mas o conteudo e um
+# manifesto de Rollout do Argo, nao um workflow de CI. Mantive o codigo como
+# veio e registrei o rotulo original aqui.
+#
+# Fonte: Elaborado pelo autor (2026)
+
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: shell
+  namespace: fiap-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: shell }
+  template:
+    spec:
+      containers:
+        - name: shell
+          image: ghcr.io/gerps2/fiap-store-shell:latest
+          ports: [{ containerPort: 8080 }]
+          readinessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+          livenessProbe:
+            httpGet: { path: /healthz, port: 8080 }
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: {}
+        - setWeight: 30
+        - pause: { duration: 60s }
+        - setWeight: 100
