@@ -4,21 +4,23 @@
 
 | Workflow | Trigger | Jobs |
 |----------|---------|------|
-| `ci.yml` | push/PR em `main` | lint → test → build |
-| `quality.yml` | push em `main` / PR | SonarCloud analysis |
+| `ci.yml` | push em `main`/`develop`, PR para `main` | lint → test → build · test → sonar |
+
+O job `sonar` roda no mesmo `ci.yml`: declara `needs: test` e baixa o artifact `coverage-report` antes do scanner. Artifact pertence ao run que o criou — num workflow separado seriam necessários `workflow_run` + `download-artifact` com `run-id`, `github-token` e `actions: read`.
 
 ## Configuração necessária
 
 ### GitHub Secrets
 | Secret | Descrição |
 |--------|-----------|
-| `SONAR_TOKEN` | Token gerado em sonarcloud.io |
+| `SONAR_TOKEN` | Token gerado em sonarcloud.io (nome sugerido: `fiap-store-ci`) |
 
 ### SonarCloud
-1. Criar conta em https://sonarcloud.io
-2. Importar o repositório
-3. Copiar o `SONAR_TOKEN` para os secrets do GitHub
-4. Criar organização `fiap-postech` (ou ajustar `sonar.organization` em `sonar-project.properties`)
+1. Entrar em https://sonarcloud.io com a conta do GitHub e importar `gerps2/fiap-store` (organização `gerps2`, project key `gerps2_fiap-store`)
+2. Em **Administration → Analysis Method**, desligar **Automatic Analysis** (senão o scan via CI falha)
+3. **My Account → Security → Generate Token** → nome `fiap-store-ci`
+4. No GitHub: **Settings → Secrets and variables → Actions → New repository secret** → `SONAR_TOKEN`
+5. Conferir `sonar.organization` e `sonar.projectKey` em `sonar-project.properties` com os valores exibidos no SonarCloud
 
 ## Husky (pre-commit local) — monorepo
 
