@@ -19,8 +19,12 @@
     "start:checkout": "ng serve mfe-checkout --port 4203",
     "start:notificacoes": "ng serve mfe-notificacoes --port 4204",
     "build": "ng build",
-    "build:shared-ui": "ng build shared-ui",
-    "build:all": "npm run build:shared-ui && ng build host && ng build mfe-produtos && ng build mfe-carrinho && ng build mfe-checkout && ng build mfe-notificacoes"
+    "build:all": "ng build host && ng build mfe-produtos && ng build mfe-carrinho && ng build mfe-checkout && ng build mfe-notificacoes",
+    "test": "ng test host --watch=false",
+    "test:ci": "ng test host --watch=false --browsers=ChromeHeadlessCI --code-coverage",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix",
+    "format": "prettier --write \"projects/**/*.{ts,html,scss,css}\""
   },
   "private": true,
   "dependencies": {
@@ -44,6 +48,10 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^21.2.7",
+    "@angular-eslint/builder": "^21.3.1",
+    "@angular-eslint/eslint-plugin": "^21.3.1",
+    "@angular-eslint/eslint-plugin-template": "^21.3.1",
+    "@angular-eslint/template-parser": "^21.3.1",
     "@angular/build": "^21.2.7",
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.0",
@@ -52,9 +60,29 @@
     "@graphql-tools/utils": "^11.0.1",
     "concurrently": "^9.0.0",
     "crossws": "^0.4.5",
+    "eslint": "^10.2.1",
+    "jasmine-core": "~5.4.0",
+    "karma": "~6.4.4",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.1",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "@types/jasmine": "~5.1.4",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.4.2",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "relay-runtime": "^20.1.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.59.1",
+    "zone.js": "~0.15.0"
+  },
+  "lint-staged": {
+    "projects/**/*.ts": [
+      "eslint --fix"
+    ],
+    "projects/**/*.{html,scss,css}": [
+      "prettier --write"
+    ]
   }
 }
