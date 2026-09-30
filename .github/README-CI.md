@@ -4,7 +4,7 @@
 
 | Workflow | Trigger | Jobs |
 |----------|---------|------|
-| `ci.yml` | push em `main`/`develop`, PR para `main` | lint → test → build → sonar |
+| `ci.yml` | push em `main`/`develop`, PR para `main` | lint → test → build → sonar (checks: `lint`, `test`, `build`, `sonar` + `SonarCloud Code Analysis`) |
 
 O job `sonar` roda no mesmo `ci.yml`: declara `needs: [test, build]` e baixa o artifact `coverage-report` antes do scanner. Artifact pertence ao run que o criou — num workflow separado seriam necessários `workflow_run` + `download-artifact` com `run-id`, `github-token` e `actions: read`.
 
