@@ -103,41 +103,23 @@ jobs:
           location: us-central1
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Apply Kubernetes manifests
-        run: |
-          kubectl apply -f deployments/k8s/namespace.yaml
-          kubectl apply -f deployments/k8s/
-
-      - name: Update backend image
-        run: |
-          VERSION=${{ needs.build-and-push.outputs.version }}
-          kubectl set image deployment/backend \
-            backend=${{ env.IMAGE_PREFIX }}-backend:$VERSION \
-            -n fiap-store
-
       - name: Install Argo Rollouts kubectl plugin
         run: |
           curl -sLO https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
           chmod +x kubectl-argo-rollouts-linux-amd64
           sudo mv kubectl-argo-rollouts-linux-amd64 /usr/local/bin/kubectl-argo-rollouts
 
-      - name: Update MFE rollouts
+      - name: Apply Kubernetes manifests
         run: |
           VERSION=${{ needs.build-and-push.outputs.version }}
-          ROLLOUTS=(shell mfe-produtos mfe-carrinho mfe-checkout mfe-notificacoes)
-          SERVICES=(shell mfe-produtos mfe-carrinho mfe-checkout mfe-notificacoes)
-
-          for i in "${!ROLLOUTS[@]}"; do
-            ROLLOUT=${ROLLOUTS[$i]}
-            SERVICE=${SERVICES[$i]}
-            echo "Updating rollout $ROLLOUT to version $VERSION..."
-            kubectl argo rollouts set image $ROLLOUT \
-              $SERVICE=${{ env.IMAGE_PREFIX }}-$SERVICE:$VERSION \
-              -n fiap-store
-          done
+          sed -i -E "s#(${{ env.IMAGE_PREFIX }}-[a-z-]+):latest#\1:$VERSION#" deployments/k8s/*.yaml
+          kubectl apply -f deployments/k8s/namespace.yaml
+          kubectl apply -f deployments/k8s/
 
       - name: Wait for backend rollout
-        run: kubectl rollout status deployment/backend -n fiap-store --timeout=600s || true
+        run: kubectl rollout status deployment/backend -n fiap-store --timeout=600s
 
       - name: Show rollout status
-        run: kubectl argo rollouts list rollouts -n fiap-store
+        run: |
+          kubectl get pods -n fiap-store
+          kubectl argo rollouts list rollouts -n fiap-store

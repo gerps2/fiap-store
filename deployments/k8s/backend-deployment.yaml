@@ -18,13 +18,20 @@ spec:
           image: ghcr.io/gerps2/fiap-store-backend:latest
           ports:
             - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: CORS_ORIGIN
+              value: https://gerson-prudencio.com.br
+            - name: PUBLIC_PATH_PREFIX
+              value: /api
           resources:
             requests:
-              cpu: "250m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "256Mi"
             limits:
               cpu: "500m"
-              memory: "512Mi"
+              memory: "256Mi"
           volumeMounts:
             - name: jwt-keys
               mountPath: /app/.keys

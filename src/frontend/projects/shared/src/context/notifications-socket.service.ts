@@ -41,7 +41,9 @@ export class NotificationsSocketService {
 
   connect(): void {
     if (this.socket?.connected) return;
-    this.socket = io(`${this.apiBase}${NAMESPACE}`, {
+    const api = new URL(this.apiBase, window.location.origin);
+    this.socket = io(`${api.origin}${NAMESPACE}`, {
+      path: `${api.pathname.replace(/\/$/, '')}/socket.io`,
       withCredentials: true,
       transports: ['websocket', 'polling'],
       reconnection: true,

@@ -36,17 +36,16 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Plan
+      - name: Terraform Apply — cluster GKE
         env:
           TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
           TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
-        run: terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -out=tfplan
-
-      - name: Terraform Apply
-        env:
-          TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
-          TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
-        run: terraform apply -auto-approve tfplan
+        run: |
+          terraform apply -auto-approve \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -target=google_container_cluster.main \
+            -target=google_project_iam_member.gke_sa_log_writer \
+            -target=google_project_iam_member.gke_sa_metric_writer
 
       - uses: google-github-actions/get-gke-credentials@v2
         with:
@@ -57,6 +56,12 @@ jobs:
       - name: Install NGINX Ingress Controller
         run: |
           kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
+          for i in $(seq 1 60); do
+            IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || true)
+            [ -n "$IP" ] && echo "Ingress IP: $IP" && exit 0
+            sleep 10
+          done
+          echo "Load Balancer sem IP após 10 minutos" && exit 1
 
       - name: Install Argo Rollouts
         run: |
@@ -66,3 +71,15 @@ jobs:
       - name: Apply Kubernetes namespace
         working-directory: .
         run: kubectl apply -f deployments/k8s/namespace.yaml
+
+      - name: Terraform Plan — DNS e CDN
+        env:
+          TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
+        run: terraform plan -var="project_id=${{ secrets.GCP_PROJECT_ID }}" -out=tfplan
+
+      - name: Terraform Apply — DNS e CDN
+        env:
+          TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
+        run: terraform apply -auto-approve tfplan

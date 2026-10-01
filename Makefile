@@ -51,9 +51,11 @@ infra: ## Provisiona VPC + GKE Autopilot no GCP
 	@echo "→ Provisionando infraestrutura em $(PROJECT_ID)..."
 	cd $(TF_DIR) && \
 	  terraform init && \
-	  terraform apply -auto-approve -var="project_id=$(PROJECT_ID)" -var="region=$(REGION)"
-	@$(MAKE) kubeconfig
+	  terraform apply -auto-approve -var="project_id=$(PROJECT_ID)" -var="region=$(REGION)" \
+	    -target=google_container_cluster.main
 	@$(MAKE) k8s-setup
+	cd $(TF_DIR) && \
+	  terraform apply -auto-approve -var="project_id=$(PROJECT_ID)" -var="region=$(REGION)"
 	@echo "✓ Infraestrutura pronta"
 
 infra-destroy: ## Destroi toda a infraestrutura GCP

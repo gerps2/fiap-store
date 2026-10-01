@@ -31,6 +31,8 @@ resource "cloudflare_record" "root" {
   type    = "A"
   content = local.ingress_ip
   proxied = true
+
+  allow_overwrite = true
 }
 
 resource "cloudflare_zone_settings_override" "main" {

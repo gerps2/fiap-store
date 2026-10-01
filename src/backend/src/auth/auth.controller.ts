@@ -23,12 +23,14 @@ const CSRF_COOKIE = 'csrf_token';
 @Controller('auth')
 export class AuthController {
   private readonly isProd: boolean;
+  private readonly refreshPath: string;
 
   constructor(
     private readonly auth: AuthService,
     private readonly config: ConfigService,
   ) {
     this.isProd = this.config.get<string>('NODE_ENV') === 'production';
+    this.refreshPath = `${this.config.get<string>('PUBLIC_PATH_PREFIX', '')}/auth`;
   }
 
   /** Emite um CSRF token (cookie legível + resposta) sem exigir autenticação. */
@@ -80,14 +82,14 @@ export class AuthController {
 
   private setSessionCookies(res: Response, tokens: AuthTokens) {
     res.cookie(ACCESS_COOKIE, tokens.accessToken, this.cookieOpts({ httpOnly: true }));
-    res.cookie(REFRESH_COOKIE, tokens.refreshTokenId, this.cookieOpts({ httpOnly: true, path: '/auth' }));
+    res.cookie(REFRESH_COOKIE, tokens.refreshTokenId, this.cookieOpts({ httpOnly: true, path: this.refreshPath }));
     res.cookie(CSRF_COOKIE, tokens.csrfToken, this.cookieOpts({ httpOnly: false }));
   }
 
   private clearSessionCookies(res: Response) {
     const base = this.cookieOpts({ httpOnly: true });
     res.clearCookie(ACCESS_COOKIE, base);
-    res.clearCookie(REFRESH_COOKIE, { ...base, path: '/auth' });
+    res.clearCookie(REFRESH_COOKIE, { ...base, path: this.refreshPath });
     res.clearCookie(CSRF_COOKIE, this.cookieOpts({ httpOnly: false }));
   }
 
