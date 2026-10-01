@@ -33,11 +33,6 @@ jobs:
           location: us-central1
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Delete Kubernetes resources
-        working-directory: .
-        run: |
-          kubectl delete -f deployments/k8s/ --ignore-not-found=true || true
-
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: '1.7.0'
@@ -45,8 +40,33 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Destroy
+      - name: Terraform Destroy — DNS e CDN
         env:
           TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
           TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
-        run: terraform destroy -auto-approve -lock=false -var="project_id=${{ secrets.GCP_PROJECT_ID }}"
+        run: |
+          terraform destroy -auto-approve -lock=false \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -target=cloudflare_record.root \
+            -target=cloudflare_ruleset.cache_rules \
+            -target=cloudflare_zone_settings_override.main
+
+      - name: Delete Kubernetes resources and load balancer
+        working-directory: .
+        run: |
+          kubectl delete -f deployments/k8s/ --ignore-not-found=true || true
+          kubectl delete namespace ingress-nginx --ignore-not-found=true --timeout=300s || true
+
+      - name: Terraform Destroy — cluster e rede
+        env:
+          TF_VAR_cloudflare_zone_id: ${{ secrets.TF_VAR_CLOUDFLARE_ZONE_ID }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.TF_VAR_CLOUDFLARE_API_TOKEN }}
+        run: |
+          terraform destroy -auto-approve -lock=false \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -target=google_container_cluster.main \
+            -target=google_compute_subnetwork.subnet \
+            -target=google_compute_network.vpc \
+            -target=google_project_iam_member.gke_sa_log_writer \
+            -target=google_project_iam_member.gke_sa_metric_writer \
+            -target=google_service_account.gke_sa
