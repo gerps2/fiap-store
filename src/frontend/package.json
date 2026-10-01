@@ -76,5 +76,13 @@
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.59.1",
     "zone.js": "~0.15.0"
+  },
+  "lint-staged": {
+    "projects/**/*.ts": [
+      "eslint --fix"
+    ],
+    "projects/**/*.{html,scss,css}": [
+      "prettier --write"
+    ]
   }
 }
