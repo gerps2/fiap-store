@@ -52,11 +52,14 @@ npm run build:all   # build do shared-ui + host + 4 MFEs
 O `main` deste repositório segue o estado da Aula 5, então um PR da `aula-04` para ele entra em conflito. No seu fork:
 
 ```bash
+git remote add upstream https://github.com/gerps2/fiap-store.git
+git fetch upstream
+
 # Refazer o hands-on do zero (ponto de partida da aula: ESLint e testes prontos, sem CI)
-git push -f origin origin/aula-04-inicio:refs/heads/main
+git push -f origin upstream/aula-04-inicio:refs/heads/main
 
 # ...ou partir do resultado final desta aula
-git push -f origin origin/aula-04:refs/heads/main
+git push -f origin upstream/aula-04:refs/heads/main
 ```
 
 1. Importe o seu fork no SonarCloud e desligue a **Automatic Analysis**
