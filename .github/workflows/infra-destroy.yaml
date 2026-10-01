@@ -55,6 +55,7 @@ jobs:
         working-directory: .
         run: |
           kubectl delete -f deployments/k8s/ --ignore-not-found=true || true
+          kubectl delete service ingress-nginx-controller -n ingress-nginx --ignore-not-found=true --timeout=600s || true
           kubectl delete namespace ingress-nginx --ignore-not-found=true --timeout=300s || true
 
       - name: Terraform Destroy — cluster e rede
