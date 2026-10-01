@@ -46,3 +46,22 @@ npm run lint        # ESLint em todos os projects
 npm run test:ci     # Karma headless + coverage (lcov.info gerado em coverage/)
 npm run build:all   # build do shared-ui + host + 4 MFEs
 ```
+
+## Rodando no seu fork
+
+O `main` deste repositório segue o estado da Aula 5, então um PR da `aula-04` para ele entra em conflito. No seu fork:
+
+```bash
+# Refazer o hands-on do zero (ponto de partida da aula: ESLint e testes prontos, sem CI)
+git push -f origin origin/aula-04-inicio:refs/heads/main
+
+# ...ou partir do resultado final desta aula
+git push -f origin origin/aula-04:refs/heads/main
+```
+
+1. Importe o seu fork no SonarCloud e desligue a **Automatic Analysis**
+2. Ajuste `sonar.organization` e `sonar.projectKey` com os valores do seu projeto
+3. Cadastre o `SONAR_TOKEN` nos secrets do seu fork
+4. Crie um branch, faça uma mudança e abra o PR para o `main` do seu fork
+
+O plano gratuito do SonarCloud mostra análises do `main` e de PRs; branches avulsas exigem plano pago.
