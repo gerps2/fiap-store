@@ -123,3 +123,110 @@ jobs:
         run: |
           kubectl get pods -n fiap-store
           kubectl argo rollouts list rollouts -n fiap-store
+
+  promote-canary:
+    name: Aprovar canary 30%
+    runs-on: ubuntu-latest
+    needs: deploy
+    environment: production-approval
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/420326696636/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-actions-deploy@project-94ea6a01-7eb7-4014-b16.iam.gserviceaccount.com'
+
+      - uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: fiap-store
+          location: us-central1
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Install Argo Rollouts kubectl plugin
+        run: |
+          curl -sLO https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+          chmod +x kubectl-argo-rollouts-linux-amd64
+          sudo mv kubectl-argo-rollouts-linux-amd64 /usr/local/bin/kubectl-argo-rollouts
+
+      - name: Promote canary to 30%
+        run: |
+          for ROLLOUT in shell mfe-carrinho mfe-notificacoes; do
+            kubectl argo rollouts promote "$ROLLOUT" -n fiap-store
+          done
+          kubectl argo rollouts list rollouts -n fiap-store
+
+  promote-full:
+    name: Aprovar 100% e troca blue-green
+    runs-on: ubuntu-latest
+    needs: promote-canary
+    environment: production-approval
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/420326696636/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-actions-deploy@project-94ea6a01-7eb7-4014-b16.iam.gserviceaccount.com'
+
+      - uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: fiap-store
+          location: us-central1
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Install Argo Rollouts kubectl plugin
+        run: |
+          curl -sLO https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+          chmod +x kubectl-argo-rollouts-linux-amd64
+          sudo mv kubectl-argo-rollouts-linux-amd64 /usr/local/bin/kubectl-argo-rollouts
+
+      - name: Promote canary to 100% and switch blue-green
+        run: |
+          ROLLOUTS=(shell mfe-carrinho mfe-notificacoes mfe-produtos mfe-checkout)
+          for ROLLOUT in "${ROLLOUTS[@]}"; do
+            kubectl argo rollouts promote "$ROLLOUT" -n fiap-store
+          done
+          for ROLLOUT in "${ROLLOUTS[@]}"; do
+            kubectl argo rollouts status "$ROLLOUT" -n fiap-store --timeout 300s
+          done
+          kubectl argo rollouts list rollouts -n fiap-store
+
+  rollback:
+    name: Rollback
+    runs-on: ubuntu-latest
+    needs: [deploy, promote-canary, promote-full]
+    if: ${{ always() && needs.deploy.result == 'success' && (needs.promote-canary.result == 'failure' || needs.promote-full.result == 'failure') }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/420326696636/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-actions-deploy@project-94ea6a01-7eb7-4014-b16.iam.gserviceaccount.com'
+
+      - uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: fiap-store
+          location: us-central1
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Install Argo Rollouts kubectl plugin
+        run: |
+          curl -sLO https://github.com/argoproj/argo-rollouts/releases/latest/download/kubectl-argo-rollouts-linux-amd64
+          chmod +x kubectl-argo-rollouts-linux-amd64
+          sudo mv kubectl-argo-rollouts-linux-amd64 /usr/local/bin/kubectl-argo-rollouts
+
+      - name: Abort rollouts and return to stable version
+        run: |
+          for ROLLOUT in shell mfe-carrinho mfe-notificacoes mfe-produtos mfe-checkout; do
+            kubectl argo rollouts abort "$ROLLOUT" -n fiap-store || true
+            STABLE=$(kubectl get rollout "$ROLLOUT" -n fiap-store -o jsonpath='{.status.stableRS}')
+            REVISION=$(kubectl get rs "$ROLLOUT-$STABLE" -n fiap-store -o jsonpath='{.metadata.annotations.rollout\.argoproj\.io/revision}')
+            kubectl argo rollouts undo "$ROLLOUT" -n fiap-store --to-revision="$REVISION"
+          done
+          kubectl rollout undo deployment/backend -n fiap-store || true
+          kubectl argo rollouts list rollouts -n fiap-store
