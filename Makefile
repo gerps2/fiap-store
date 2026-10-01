@@ -81,7 +81,7 @@ k8s-setup: kubeconfig ## Instala NGINX Ingress + Argo Rollouts no cluster
 	kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/cloud/deploy.yaml
 	@echo "→ Instalando Argo Rollouts..."
 	kubectl create namespace argo-rollouts --dry-run=client -o yaml | kubectl apply -f -
-	kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+	kubectl apply --server-side --force-conflicts -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 	@echo "→ Aguardando NGINX ficar pronto..."
 	kubectl wait --namespace ingress-nginx \
 	  --for=condition=ready pod \

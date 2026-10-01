@@ -66,7 +66,7 @@ jobs:
       - name: Install Argo Rollouts
         run: |
           kubectl create namespace argo-rollouts --dry-run=client -o yaml | kubectl apply -f -
-          kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+          kubectl apply --server-side --force-conflicts -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
 
       - name: Apply Kubernetes namespace
         working-directory: .
