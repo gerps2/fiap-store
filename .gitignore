@@ -4,6 +4,8 @@ node_modules/
 # Build outputs
 dist/
 .angular/
+coverage/
+out-tsc/
 
 # Backend (NestJS + SQLite — a partir da Aula 3)
 src/backend/dist/
