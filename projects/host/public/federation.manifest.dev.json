@@ -1,0 +1,6 @@
+{
+  "mfe-produtos": "http://localhost:4300/mfe-produtos/browser/remoteEntry.json",
+  "mfe-carrinho": "http://localhost:4300/mfe-carrinho/browser/remoteEntry.json",
+  "mfe-checkout": "http://localhost:4300/mfe-checkout/browser/remoteEntry.json",
+  "mfe-notificacoes": "http://localhost:4300/mfe-notificacoes/browser/remoteEntry.json"
+}
