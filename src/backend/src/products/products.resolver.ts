@@ -6,6 +6,8 @@ import { Category } from './category.entity';
 import { CreateProductInput } from './dto/create-product.input';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CsrfGuard } from '../auth/csrf.guard';
+import { RolesGuard } from '../auth/roles.guard';
+import { Roles } from '../auth/roles.decorator';
 
 @Resolver(() => Product)
 export class ProductsResolver {
@@ -31,7 +33,8 @@ export class ProductsResolver {
     return this.products.listCategories();
   }
 
-  @UseGuards(JwtAuthGuard, CsrfGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, CsrfGuard)
+  @Roles('admin')
   @Mutation(() => Product)
   createProduct(@Args('input') input: CreateProductInput): Promise<Product> {
     return this.products.create(input);

@@ -1,6 +1,7 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LIST_PRODUCTS, type ProductDto, UiButtonComponent, UiRemoteOutletComponent } from '@fiap/shared';
+import { RouterLink } from '@angular/router';
+import { HasGroupDirective, LIST_PRODUCTS, type ProductDto, UiButtonComponent, UiRemoteOutletComponent } from '@fiap/shared';
 import { Apollo } from 'apollo-angular';
 
 interface Produto {
@@ -12,11 +13,12 @@ interface Produto {
 @Component({
   selector: 'mfe-produtos',
   standalone: true,
-  imports: [CommonModule, UiButtonComponent, UiRemoteOutletComponent],
+  imports: [CommonModule, RouterLink, HasGroupDirective, UiButtonComponent, UiRemoteOutletComponent],
   template: `
     <section class="produtos">
       <header class="cabecalho">
         <h3>Catalogo</h3>
+        <a *hasGroup="'admin'" routerLink="/admin/products/new" class="novo">+ Novo produto</a>
         <div class="alertas">
           <span>Alertas do catalogo</span>
           <ui-remote-outlet remote="mfe-notificacoes" exposed="./Sino" [compact]="true" />
@@ -39,6 +41,7 @@ interface Produto {
   styles: [`
     .produtos { padding: 16px; border: 1px solid var(--fiap-color-border); border-radius: 8px; background: var(--fiap-color-surface); }
     .cabecalho { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .novo { color: var(--fiap-color-brand); font-size: 13px; font-weight: 600; text-decoration: none; }
     .alertas { display: flex; align-items: center; gap: 4px; color: var(--fiap-color-muted); font-size: 12px; }
     h3 { margin: 0; font-size: 16px; color: var(--fiap-color-text); }
     ul { list-style: none; padding: 0; margin: 0; }

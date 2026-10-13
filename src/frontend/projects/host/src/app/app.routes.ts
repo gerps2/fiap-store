@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/native-federation';
+import { adminGuard } from './auth/admin.guard';
+import { authGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   {
@@ -51,6 +53,11 @@ export const routes: Routes = [
     path: 'auth/signup',
     data: { cadastro: true },
     loadComponent: () => import('./auth/auth.page').then(m => m.AuthPage),
+  },
+  {
+    path: 'admin/products/new',
+    canMatch: [authGuard, adminGuard],
+    loadComponent: () => import('./pages/admin/new-product.page').then(m => m.NewProductPage),
   },
   {
     path: '**',

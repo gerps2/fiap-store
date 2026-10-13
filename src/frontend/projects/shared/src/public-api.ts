@@ -14,5 +14,6 @@ export * from './context/api-base-url.token';
 export * from './context/user-context.types';
 export * from './context/user-context.service';
 export * from './context/apollo.provider';
+export * from './context/has-group.directive';
 
 export * from './graphql/catalog.gql';

@@ -12,6 +12,17 @@ export const LIST_PRODUCTS = gql`
   }
 `;
 
+export const CREATE_PRODUCT = gql`
+  mutation CreateProduct($input: CreateProductInput!) {
+    createProduct(input: $input) {
+      id
+      sku
+      name
+      priceCents
+    }
+  }
+`;
+
 export interface ProductDto {
   id: string;
   sku: string;
