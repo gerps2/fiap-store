@@ -9,3 +9,10 @@ export * from './ui/ui-stack.component';
 export * from './ui/ui-tabs.component';
 export * from './ui/ui-topbar.component';
 export * from './ui/ui-remote-outlet.component';
+
+export * from './context/api-base-url.token';
+export * from './context/user-context.types';
+export * from './context/user-context.service';
+export * from './context/apollo.provider';
+
+export * from './graphql/catalog.gql';

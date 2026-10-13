@@ -44,6 +44,15 @@ export const routes: Routes = [
       }).then(m => m.NOTIFICACOES_ROUTES),
   },
   {
+    path: 'auth/login',
+    loadComponent: () => import('./auth/auth.page').then(m => m.AuthPage),
+  },
+  {
+    path: 'auth/signup',
+    data: { cadastro: true },
+    loadComponent: () => import('./auth/auth.page').then(m => m.AuthPage),
+  },
+  {
     path: '**',
     redirectTo: '',
   },

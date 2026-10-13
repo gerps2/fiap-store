@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UiButtonComponent, UiRemoteOutletComponent } from '@fiap/shared';
+import { LIST_PRODUCTS, type ProductDto, UiButtonComponent, UiRemoteOutletComponent } from '@fiap/shared';
+import { Apollo } from 'apollo-angular';
 
 interface Produto {
+  id: string;
   nome: string;
   preco: number;
 }
@@ -21,12 +23,15 @@ interface Produto {
         </div>
       </header>
       <ul>
-        @for (p of produtos; track p.nome) {
+        @for (p of produtos(); track p.id) {
           <li>
             <strong>{{ p.nome }}</strong>
             <span>R$ {{ p.preco | number:'1.2-2' }}</span>
             <ui-button size="sm" (click)="adicionar(p)">Adicionar</ui-button>
           </li>
+        }
+        @empty {
+          <li>{{ carregando() ? 'Carregando catalogo...' : 'Nenhum produto encontrado.' }}</li>
         }
       </ul>
     </section>
@@ -44,11 +49,20 @@ interface Produto {
   `],
 })
 export class ProdutosComponent {
-  produtos: Produto[] = [
-    { nome: 'Camiseta FIAP Dev', preco: 89.9 },
-    { nome: 'Caneca Angular Lover', preco: 39.9 },
-    { nome: 'Livro Microfrontends', preco: 129.9 },
-  ];
+  private readonly apollo = inject(Apollo);
+  protected readonly produtos = signal<Produto[]>([]);
+  protected readonly carregando = signal(true);
+
+  constructor() {
+    const consulta = this.apollo
+      .watchQuery<{ listProducts: ProductDto[] }>({ query: LIST_PRODUCTS, fetchPolicy: 'cache-and-network' })
+      .valueChanges.subscribe((resultado) => {
+        this.carregando.set(resultado.loading);
+        const lista = (resultado.data?.listProducts ?? []) as ProductDto[];
+        this.produtos.set(lista.map((p) => ({ id: p.id, nome: p.name, preco: p.priceCents / 100 })));
+      });
+    inject(DestroyRef).onDestroy(() => consulta.unsubscribe());
+  }
 
   adicionar(produto: Produto): void {
     window.dispatchEvent(new CustomEvent('fiap:cart:add', { detail: produto }));
