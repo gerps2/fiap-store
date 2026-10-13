@@ -15,6 +15,8 @@ export * from './context/user-context.types';
 export * from './context/user-context.service';
 export * from './context/apollo.provider';
 export * from './context/has-group.directive';
+export * from './context/notification-hub.service';
+export * from './context/notifications-socket.service';
 
 export * from './graphql/catalog.gql';
 export * from './graphql/cart.gql';

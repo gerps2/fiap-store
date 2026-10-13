@@ -1,7 +1,15 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ADD_TO_CART, HasGroupDirective, LIST_PRODUCTS, type ProductDto, UiButtonComponent, UiRemoteOutletComponent } from '@fiap/shared';
+import {
+  ADD_TO_CART,
+  HasGroupDirective,
+  LIST_PRODUCTS,
+  NotificationHubService,
+  type ProductDto,
+  UiButtonComponent,
+  UiRemoteOutletComponent,
+} from '@fiap/shared';
 import { Apollo } from 'apollo-angular';
 
 interface Produto {
@@ -53,6 +61,7 @@ interface Produto {
 })
 export class ProdutosComponent {
   private readonly apollo = inject(Apollo);
+  private readonly hub = inject(NotificationHubService);
   protected readonly produtos = signal<Produto[]>([]);
   protected readonly carregando = signal(true);
 
@@ -68,6 +77,9 @@ export class ProdutosComponent {
   }
 
   adicionar(produto: Produto): void {
-    this.apollo.mutate({ mutation: ADD_TO_CART, variables: { productId: produto.id } }).subscribe({ error: () => undefined });
+    this.apollo.mutate({ mutation: ADD_TO_CART, variables: { productId: produto.id } }).subscribe({
+      next: () => this.hub.success('Adicionado ao carrinho', produto.nome),
+      error: () => undefined,
+    });
   }
 }
