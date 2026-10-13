@@ -17,3 +17,4 @@ export * from './context/apollo.provider';
 export * from './context/has-group.directive';
 
 export * from './graphql/catalog.gql';
+export * from './graphql/cart.gql';

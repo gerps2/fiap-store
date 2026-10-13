@@ -1,13 +1,8 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { UiButtonComponent } from '@fiap/shared';
-
-interface ItemCarrinho {
-  nome: string;
-  quantidade: number;
-  precoUnitario: number;
-}
+import { AUTH_CHANGED_EVENT, type CartDto, MY_CART, UiButtonComponent } from '@fiap/shared';
+import { Apollo } from 'apollo-angular';
 
 @Component({
   selector: 'mfe-carrinho',
@@ -17,23 +12,25 @@ interface ItemCarrinho {
     <section class="carrinho">
       <h3>Itens no carrinho</h3>
       <ul>
-        @for (item of itens(); track item.nome) {
+        @for (item of itens(); track item.id) {
           <li>
             <div class="linha">
-              <strong>{{ item.nome }}</strong>
-              <span>{{ item.quantidade }} x R$ {{ item.precoUnitario | number:'1.2-2' }}</span>
+              <strong>{{ item.product.name }}</strong>
+              <span>{{ item.quantity }} x R$ {{ item.product.priceCents / 100 | number:'1.2-2' }}</span>
             </div>
             <div class="subtotal">
-              R$ {{ item.quantidade * item.precoUnitario | number:'1.2-2' }}
+              R$ {{ item.quantity * item.product.priceCents / 100 | number:'1.2-2' }}
             </div>
           </li>
+        } @empty {
+          <li class="vazio">{{ aviso() }}</li>
         }
       </ul>
       <div class="total">
         <span>Total</span>
         <strong>R$ {{ total() | number:'1.2-2' }}</strong>
       </div>
-      <ui-button class="finalizar" (click)="finalizar()">Finalizar compra</ui-button>
+      <ui-button class="finalizar" [disabled]="itens().length === 0" (click)="finalizar()">Finalizar compra</ui-button>
     </section>
   `,
   styles: [`
@@ -42,6 +39,7 @@ interface ItemCarrinho {
     ul { list-style: none; padding: 0; margin: 0 0 12px; }
     li { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--fiap-color-border); font-size: 14px; }
     li:last-child { border-bottom: none; }
+    .vazio { color: var(--fiap-color-muted); }
     .linha { display: flex; flex-direction: column; }
     .linha span { color: var(--fiap-color-muted); font-size: 12px; }
     .subtotal { color: var(--fiap-color-text); font-weight: 600; }
@@ -52,33 +50,32 @@ interface ItemCarrinho {
 })
 export class CarrinhoComponent {
   private readonly router = inject(Router);
+  private readonly apollo = inject(Apollo);
+  private readonly carrinho = signal<CartDto | null>(null);
 
-  itens = signal<ItemCarrinho[]>([
-    { nome: 'Camiseta FIAP Dev', quantidade: 2, precoUnitario: 89.9 },
-    { nome: 'Caneca Angular Lover', quantidade: 1, precoUnitario: 39.9 },
-  ]);
-
-  total = computed(() =>
-    this.itens().reduce((acc, item) => acc + item.quantidade * item.precoUnitario, 0),
-  );
+  protected readonly itens = computed(() => this.carrinho()?.items ?? []);
+  protected readonly total = computed(() => (this.carrinho()?.totalCents ?? 0) / 100);
+  protected readonly aviso = signal('Seu carrinho está vazio.');
 
   constructor() {
-    const aoAdicionar = (ev: Event) => this.adicionar((ev as CustomEvent<{ nome: string; preco: number }>).detail);
-    window.addEventListener('fiap:cart:add', aoAdicionar);
-    inject(DestroyRef).onDestroy(() => window.removeEventListener('fiap:cart:add', aoAdicionar));
+    const consulta = this.apollo.watchQuery<{ myCart: CartDto }>({
+      query: MY_CART,
+      fetchPolicy: 'cache-and-network',
+      errorPolicy: 'all',
+    });
+    const assinatura = consulta.valueChanges.subscribe((resultado) => {
+      this.carrinho.set((resultado.data?.myCart as CartDto | undefined) ?? null);
+      this.aviso.set(resultado.errors?.length ? 'Entre para ver seu carrinho.' : 'Seu carrinho está vazio.');
+    });
+    const recarregar = () => void consulta.refetch().catch(() => this.carrinho.set(null));
+    window.addEventListener(AUTH_CHANGED_EVENT, recarregar);
+    inject(DestroyRef).onDestroy(() => {
+      assinatura.unsubscribe();
+      window.removeEventListener(AUTH_CHANGED_EVENT, recarregar);
+    });
   }
 
   protected finalizar(): void {
     void this.router.navigateByUrl('/checkout');
-  }
-
-  private adicionar(produto: { nome: string; preco: number }): void {
-    this.itens.update((lista) => {
-      const existe = lista.some((item) => item.nome === produto.nome);
-      return existe
-        ? lista.map((item) => (item.nome === produto.nome ? { ...item, quantidade: item.quantidade + 1 } : item))
-        : [...lista, { nome: produto.nome, quantidade: 1, precoUnitario: produto.preco }];
-    });
-    window.dispatchEvent(new CustomEvent('fiap:notify', { detail: { titulo: `Adicionado ao carrinho: ${produto.nome}` } }));
   }
 }

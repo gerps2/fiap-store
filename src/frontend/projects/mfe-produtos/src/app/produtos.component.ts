@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HasGroupDirective, LIST_PRODUCTS, type ProductDto, UiButtonComponent, UiRemoteOutletComponent } from '@fiap/shared';
+import { ADD_TO_CART, HasGroupDirective, LIST_PRODUCTS, type ProductDto, UiButtonComponent, UiRemoteOutletComponent } from '@fiap/shared';
 import { Apollo } from 'apollo-angular';
 
 interface Produto {
@@ -68,6 +68,6 @@ export class ProdutosComponent {
   }
 
   adicionar(produto: Produto): void {
-    window.dispatchEvent(new CustomEvent('fiap:cart:add', { detail: produto }));
+    this.apollo.mutate({ mutation: ADD_TO_CART, variables: { productId: produto.id } }).subscribe({ error: () => undefined });
   }
 }
