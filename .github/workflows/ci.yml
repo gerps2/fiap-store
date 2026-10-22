@@ -2,9 +2,8 @@ name: CI — fiap-store
 
 on:
   push:
-    branches: [main, develop]
+    branches: [aula-04-base]
   pull_request:
-    branches: [main]
 
 jobs:
   lint:
