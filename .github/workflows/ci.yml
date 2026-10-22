@@ -4,6 +4,7 @@ on:
   push:
     branches: [aula-04-base]
   pull_request:
+    branches: [aula-04-base]
 
 jobs:
   lint:
