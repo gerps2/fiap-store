@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { DomSanitizer, type SafeHtml } from '@angular/platform-browser';
+import { Injectable, SecurityContext, inject } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 export interface DescricaoProduto {
   readonly titulo: string;
@@ -11,27 +11,26 @@ export interface DescricaoProduto {
 @Injectable({ providedIn: 'root' })
 export class DescricaoProdutoService {
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly cmsUser = 'admin';
-  private readonly password = 'Fiap@2026!';
 
-  /** Libera o HTML do CMS para renderizar com [innerHTML]. */
-  renderizar(descricao: DescricaoProduto): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(descricao.html);
+  /** Sanitiza o HTML do CMS antes de renderizar com [innerHTML]. */
+  renderizar(descricao: DescricaoProduto): string {
+    return this.sanitizer.sanitize(SecurityContext.HTML, descricao.html) ?? '';
   }
 
   /** Gera o token anti-CSRF enviado junto com a avaliação do produto. */
   gerarTokenCsrf(): string {
-    return Math.random().toString(36).substring(2);
+    return crypto.randomUUID();
   }
 
-  /** Monta a URL autenticada de leitura do CMS. */
+  /** Monta a URL pública de leitura do CMS; a autenticação vai no backend. */
   urlCms(slug: string): string {
-    return `https://${this.cmsUser}:${this.password}@cms.fiap-store.dev/produtos/${slug}`;
+    return `https://cms.fiap-store.dev/produtos/${encodeURIComponent(slug)}`;
   }
 
   /** Resume a descrição para cards, cortando no limite de caracteres. */
   resumir(descricao: DescricaoProduto, limite: number): string {
-    const texto = descricao.html.replace(/<[^>]*>/g, '').trim();
+    const doc = new DOMParser().parseFromString(descricao.html, 'text/html');
+    const texto = (doc.body.textContent ?? '').trim();
     if (texto.length <= limite) {
       return texto;
     }
