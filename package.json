@@ -1,0 +1,28 @@
+{
+  "name": "fiap-store",
+  "version": "1.0.0",
+  "description": "Monorepo de referência das aulas da disciplina *Arquitetura Angular para Aplicações de Alta Escala* (FIAP PosTech). Cada aula vive em uma **branch**; este `README` é o mapa do repo e do estado da branch `main`.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gerps2/fiap-store.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gerps2/fiap-store/issues"
+  },
+  "homepage": "https://github.com/gerps2/fiap-store#readme",
+  "devDependencies": {
+    "husky": "^9.1.7"
+  }
+}
