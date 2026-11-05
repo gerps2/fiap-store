@@ -5,14 +5,14 @@ on:
     branches: [aula-04-base, develop]
   pull_request:
     branches: [aula-04-base]
-  
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: src/frontend
-      steps:
+    steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -21,7 +21,7 @@ jobs:
           cache-dependency-path: src/frontend/package-lock.json
       - run: npm ci
       - run: npm run lint
-  
+
   test:
     needs: lint
     runs-on: ubuntu-latest
@@ -41,7 +41,7 @@ jobs:
         with:
           name: coverage-report
           path: src/frontend/coverage/
-    
+
   build:
     needs: test
     runs-on: ubuntu-latest
@@ -56,7 +56,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: src/frontend/package-lock.json
       - run: npm ci
-      - run: npm run build:all 
+      - run: npm run build:all
 
   sonar:
     runs-on: ubuntu-latest
