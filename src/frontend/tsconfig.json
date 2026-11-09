@@ -11,14 +11,12 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "experimentalDecorators": true,
+    "paths": {
+      "@fiap/shared": ["./projects/shared/src/public-api.ts"]
+    },
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve",
-    "baseUrl": "./",
-    "paths": {
-      "@fiap/shared": ["./projects/shared/src/public-api.ts"],
-      "@fiap/shared/*": ["./projects/shared/*"]
-    }
+    "module": "preserve"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -42,6 +40,12 @@
     },
     {
       "path": "./projects/mfe-notificacoes/tsconfig.app.json"
+    },
+    {
+      "path": "./projects/shared/tsconfig.lib.json"
+    },
+    {
+      "path": "./projects/shared/tsconfig.spec.json"
     }
   ]
 }

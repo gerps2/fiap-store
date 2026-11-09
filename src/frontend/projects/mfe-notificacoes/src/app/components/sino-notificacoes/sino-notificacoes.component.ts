@@ -1,163 +1,70 @@
+import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  ElementRef,
-  HostListener,
-  computed,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
-import { Apollo, QueryRef } from 'apollo-angular';
-import {
-  MARK_AS_READ,
-  MY_NOTIFICATIONS,
   NotificationHubService,
   NotificationsSocketService,
+  UiBadgeComponent,
+  UiButtonComponent,
   UserContextService,
-  type HubToast,
-  type NotificationDto,
 } from '@fiap/shared';
 
-interface NotifView {
-  id: string;
-  titulo: string;
-  lida: boolean;
-  criadaEm: Date;
-}
-
-/**
- * Sino de notificações — UI do hub central.
- *
- * - Query GraphQL `myNotifications` carrega histórico.
- * - `NotificationsSocketService` abre Socket.IO (cookie httpOnly no handshake)
- *   e cada `notification:new` cai no `NotificationHubService` como toast.
- * - O hub é compartilhado com todos os MFEs — qualquer MFE que injete
- *   `NotificationHubService` pode disparar um toast que sai por aqui.
- */
 @Component({
   selector: 'mfe-sino-notificacoes',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
-  templateUrl: './sino-notificacoes.component.html',
-  styleUrls: ['./sino-notificacoes.component.css'],
+  imports: [UiBadgeComponent, UiButtonComponent],
+  template: `
+    <div class="sino">
+      <button type="button" class="sino-btn" aria-label="Notificações" (click)="aberto.set(!aberto())">
+        <span>🔔</span>
+        @if (hub.unreadCount() > 0) {
+          <ui-badge class="badge">{{ hub.unreadCount() }}</ui-badge>
+        }
+      </button>
+
+      @if (aberto()) {
+        <div class="painel">
+          <header>
+            <strong>Notificações</strong>
+            <ui-button variant="ghost" size="sm" (click)="hub.resetUnread()">Marcar todas</ui-button>
+          </header>
+          <ul>
+            @for (n of hub.toasts(); track n.id) {
+              <li [attr.data-kind]="n.kind"><strong>{{ n.title }}</strong> {{ n.body }}</li>
+            } @empty {
+              <li>Nenhuma notificação.</li>
+            }
+          </ul>
+        </div>
+      }
+
+      @if (hub.ativo(); as toast) {
+        <div class="toast" [attr.data-kind]="toast.kind" role="status">
+          <strong>{{ toast.title }}</strong>
+          <span>{{ toast.body }}</span>
+        </div>
+      }
+    </div>
+  `,
+  styles: [`
+    .sino { position: relative; display: inline-block; }
+    .sino-btn { position: relative; border: 0; background: transparent; font-size: 20px; cursor: pointer; padding: 6px 10px; }
+    .badge { position: absolute; top: 0; right: 0; }
+    .painel { position: absolute; top: 100%; right: 0; z-index: 10; width: 300px; margin-top: 6px; border: 1px solid var(--fiap-color-border); border-radius: 8px; background: var(--fiap-color-surface); box-shadow: var(--fiap-shadow-md); }
+    .painel header { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--fiap-color-border); font-size: 14px; }
+    .painel ul { list-style: none; margin: 0; padding: 4px 0; max-height: 260px; overflow: auto; }
+    .painel li { padding: 8px 12px; font-size: 13px; color: var(--fiap-color-text); }
+    .painel li[data-kind='error'] strong { color: var(--fiap-color-brand); }
+    .toast { position: fixed; right: 24px; bottom: 24px; z-index: 20; display: flex; flex-direction: column; gap: 2px; max-width: 320px; padding: 12px 16px; border-radius: 8px; background: var(--fiap-color-success); color: var(--fiap-color-on-brand); font-size: 14px; box-shadow: var(--fiap-shadow-md); }
+    .toast[data-kind='error'] { background: var(--fiap-color-brand); }
+  `],
 })
 export class SinoNotificacoesComponent {
-  private readonly apollo = inject(Apollo);
-  private readonly hub = inject(NotificationHubService);
-  private readonly socket = inject(NotificationsSocketService);
-  private readonly ctx = inject(UserContextService);
-  private readonly host = inject(ElementRef<HTMLElement>);
-
+  protected readonly hub = inject(NotificationHubService);
   protected readonly aberto = signal(false);
-  private readonly _itens = signal<NotifView[]>([]);
-  private queryRef?: QueryRef<{ myNotifications: NotificationDto[] }>;
-
-  /** Alias do template antigo (servico.itens / servico.naoLidas / servico.marcar...). */
-  protected readonly servico = {
-    itens: this._itens.asReadonly(),
-    naoLidas: computed(() => this._itens().filter((n) => !n.lida).length),
-    marcarComoLida: (id: string): void => {
-      this.apollo
-        .mutate<{ markAsRead: { id: string; readAt: string } }>({
-          mutation: MARK_AS_READ,
-          variables: { id },
-          refetchQueries: ['MyNotifications'],
-        })
-        .subscribe({ error: () => this.hub.error('Erro', 'Falha ao marcar como lida.') });
-      this._itens.update((list) => list.map((n) => (n.id === id ? { ...n, lida: true } : n)));
-    },
-    marcarTodasComoLidas: (): void => {
-      for (const n of this._itens().filter((x) => !x.lida)) {
-        this.servico.marcarComoLida(n.id);
-      }
-    },
-  };
-
-  /** Bridge do template: `toast.toasts()` / `toast.remover(id)` → hub central. */
-  protected readonly toast = {
-    toasts: computed(() =>
-      this.hub.toasts().map((t: HubToast) => ({
-        id: t.id,
-        titulo: t.title,
-        body: t.body,
-        variante: t.kind,
-        leaving: false,
-      })),
-    ),
-    remover: (id: number): void => this.hub.dismiss(id),
-  };
 
   constructor() {
-    const destroyRef = inject(DestroyRef);
-
-    this.queryRef = this.apollo.watchQuery<{ myNotifications: NotificationDto[] }>({
-      query: MY_NOTIFICATIONS,
-      fetchPolicy: 'cache-and-network',
-      errorPolicy: 'all',
-    });
-    const histSub = this.queryRef.valueChanges.subscribe((r) => {
-      const list = (r.data?.myNotifications ?? []) as NotificationDto[];
-      this._itens.set(
-        list.map<NotifView>((n) => ({
-          id: n.id,
-          titulo: n.title,
-          lida: !!n.readAt,
-          criadaEm: new Date(n.createdAt),
-        })),
-      );
-    });
-    destroyRef.onDestroy(() => histSub.unsubscribe());
-
-    // Conecta o socket. Se não houver cookie httpOnly ainda, o handshake do
-    // server rejeita com `connect_error` → reconnect automático continua
-    // tentando, e na hora do login o próximo handshake já tem o cookie.
-    this.socket.connect();
-    destroyRef.onDestroy(() => this.socket.disconnect());
-
-    // Quando um toast chega via socket, refetch do histórico pra refletir o novo item
-    effect(() => {
-      if (this.hub.toasts().length > 0) this.queryRef?.refetch();
-    });
-  }
-
-  protected alternarPainel(event: MouseEvent): void {
-    event.stopPropagation();
-    const novo = !this.aberto();
-    this.aberto.set(novo);
-    if (novo) this.hub.resetUnread();
-  }
-
-  protected fechar(): void {
-    this.aberto.set(false);
-  }
-
-  protected marcarTodas(event: MouseEvent): void {
-    event.stopPropagation();
-    this.servico.marcarTodasComoLidas();
-  }
-
-  protected formatarTempo(n: NotifView): string {
-    const diff = Date.now() - n.criadaEm.getTime();
-    const mins = Math.floor(diff / 60000);
-    if (mins < 1) return 'agora';
-    if (mins < 60) return `${mins} min atrás`;
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs} h atrás`;
-    return `${Math.floor(hrs / 24)} d atrás`;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.aberto()) return;
-    const target = event.target as Node;
-    if (!this.host.nativeElement.contains(target)) this.aberto.set(false);
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    if (this.aberto()) this.aberto.set(false);
+    const ctx = inject(UserContextService);
+    const socket = inject(NotificationsSocketService);
+    effect(() => (ctx.isAuthenticated() ? socket.connect() : socket.disconnect()));
+    inject(DestroyRef).onDestroy(() => socket.disconnect());
   }
 }

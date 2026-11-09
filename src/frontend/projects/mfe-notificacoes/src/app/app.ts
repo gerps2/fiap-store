@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { SinoNotificacoesComponent } from './components/sino-notificacoes/sino-notificacoes.component';
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [SinoNotificacoesComponent],
-  template: `<mfe-sino-notificacoes />`,
+  imports: [RouterOutlet],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
 })
-export class App {}
+export class App {
+  protected readonly title = signal('mfe-notificacoes');
+}
