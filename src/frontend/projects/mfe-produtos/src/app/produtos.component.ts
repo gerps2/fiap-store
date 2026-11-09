@@ -25,7 +25,7 @@ interface Produto {
   template: `
     <section class="produtos">
       <header class="cabecalho">
-        <h3>Catalogo</h3>
+        <h3>Catalogo de ofertas</h3>
         <a *hasGroup="'admin'" routerLink="/admin/products/new" class="novo">+ Novo produto</a>
         <div class="alertas">
           <span>Alertas do catalogo</span>
