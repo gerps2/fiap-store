@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
-import { ProdutosComponent } from './pages/produtos/produtos.page';
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [ProdutosComponent],
-  template: `<mfe-produtos />`,
+  imports: [RouterOutlet],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
 })
-export class App {}
+export class App {
+  protected readonly title = signal('mfe-produtos');
+}

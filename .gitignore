@@ -1,31 +1,17 @@
-# Dependencies
+# Dependências e artefatos
 node_modules/
-
-# Build outputs
 dist/
 .angular/
 
-# Backend (NestJS + SQLite — a partir da Aula 3)
-src/backend/dist/
-src/backend/db.sqlite
-src/backend/db.sqlite-journal
-src/backend/.keys/
-
-# Logs
-*.log
-npm-debug.log*
-
-# Environments
+# Segredos e dados locais
 .env
-.env.local
+.keys/
+*.pem
+db.sqlite*
 
-# OS
 .DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
+coverage/
+out-tsc/
 
 # Terraform
 .terraform/

@@ -5,9 +5,9 @@ import { Product } from './product.entity';
 import { Category } from './category.entity';
 import { CreateProductInput } from './dto/create-product.input';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CsrfGuard } from '../auth/csrf.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { CsrfGuard } from '../auth/csrf.guard';
 
 @Resolver(() => Product)
 export class ProductsResolver {
@@ -33,7 +33,6 @@ export class ProductsResolver {
     return this.products.listCategories();
   }
 
-  /** Apenas admins podem criar produtos (defense in depth — guard + validação no resolver). */
   @UseGuards(JwtAuthGuard, RolesGuard, CsrfGuard)
   @Roles('admin')
   @Mutation(() => Product)

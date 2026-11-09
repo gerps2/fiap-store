@@ -1,7 +1,8 @@
-import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withFetch } from '@angular/common/http';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideStoreApollo, UserContextService } from '@fiap/shared';
+import { provideStoreApollo } from '@fiap/shared';
+
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -10,6 +11,5 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch()),
     provideRouter(routes),
     provideStoreApollo(),
-    provideAppInitializer(() => inject(UserContextService).hydrate().catch(() => null)),
   ],
 };

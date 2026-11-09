@@ -3,53 +3,66 @@ kind: Ingress
 metadata:
   name: fiap-store
   namespace: fiap-store
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  ingressClassName: nginx
   rules:
     - host: gerson-prudencio.com.br
       http:
         paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: backend
-                port:
-                  number: 80
-          - path: /produtos
-            pathType: Prefix
-            backend:
-              service:
-                name: mfe-produtos-active
-                port:
-                  number: 80
-          - path: /carrinho
-            pathType: Prefix
-            backend:
-              service:
-                name: mfe-carrinho
-                port:
-                  number: 80
-          - path: /checkout
-            pathType: Prefix
-            backend:
-              service:
-                name: mfe-checkout-active
-                port:
-                  number: 80
-          - path: /notificacoes
-            pathType: Prefix
-            backend:
-              service:
-                name: mfe-notificacoes
-                port:
-                  number: 80
           - path: /
             pathType: Prefix
             backend:
               service:
                 name: shell
+                port:
+                  number: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fiap-store-prefixed
+  namespace: fiap-store
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: gerson-prudencio.com.br
+      http:
+        paths:
+          - path: /api/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 80
+          - path: /produtos/(.+)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: mfe-produtos-active
+                port:
+                  number: 80
+          - path: /carrinho/(.+)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: mfe-carrinho
+                port:
+                  number: 80
+          - path: /checkout/(.+)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: mfe-checkout-active
+                port:
+                  number: 80
+          - path: /notificacoes/(.+)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: mfe-notificacoes
                 port:
                   number: 80

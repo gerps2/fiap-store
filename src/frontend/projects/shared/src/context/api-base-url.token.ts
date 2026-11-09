@@ -1,6 +1,6 @@
-import { InjectionToken } from '@angular/core';
+import { InjectionToken, isDevMode } from '@angular/core';
 
-/** URL base da API fiap-store (usada por Apollo + HttpClient de todos os MFEs). */
+/** URL base da API fiap-store: backend local em dev, prefixo /api do Ingress em produção. */
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL', {
-  factory: () => 'http://localhost:3000',
+  factory: () => (isDevMode() ? 'http://localhost:3000' : '/api'),
 });
