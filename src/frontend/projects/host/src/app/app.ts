@@ -9,7 +9,7 @@ import { AuthService } from './auth/auth.service';
   imports: [RouterOutlet, RouterLink, RouterLinkActive, UiButtonComponent, UiRemoteOutletComponent],
   template: `
     <header class="topbar">
-      <h1 class="brand">FIAP Store</h1>
+      <h1 class="brand">FIAP Store · Ofertas</h1>
       <nav class="menu">
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
         <a routerLink="/produtos" routerLinkActive="active">Produtos</a>
